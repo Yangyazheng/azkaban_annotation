@@ -20,22 +20,48 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * 便捷实用的工具类，
+ * 目前只是时间格式化
+ */
 public class VelocityUtils {
-  public String formatDate(long timestamp) {
-    return formatDate(timestamp, "yyyy-MM-dd HH:mm:ss");
-  }
+    /**
+     * 格式化时间
+     * @param timestamp
+     * @return
+     */
+    public String formatDate(long timestamp) {
+        return formatDate(timestamp, "yyyy-MM-dd HH:mm:ss");
+    }
 
-  public String formatDate(DateTime date) {
-    return formatDate(date, "yyyy-MM-dd HH:mm:ss");
-  }
+    /**
+     * 格式化时间
+     * @param date
+     * @return
+     */
+    public String formatDate(DateTime date) {
+        return formatDate(date, "yyyy-MM-dd HH:mm:ss");
+    }
 
-  public String formatDate(long timestamp, String format) {
-    DateTimeFormatter f = DateTimeFormat.forPattern(format);
-    return f.print(timestamp);
-  }
+    /**
+     * 格式化时间
+     * @param timestamp
+     * @param format
+     * @return
+     */
+    public String formatDate(long timestamp, String format) {
+        DateTimeFormatter f = DateTimeFormat.forPattern(format);
+        return f.print(timestamp);
+    }
 
-  public String formatDate(DateTime date, String format) {
-    DateTimeFormatter f = DateTimeFormat.forPattern(format);
-    return f.print(date);
-  }
+    /**
+     * 格式化时间
+     * @param date
+     * @param format
+     * @return
+     */
+    public String formatDate(DateTime date, String format) {
+        DateTimeFormatter f = DateTimeFormat.forPattern(format);
+        return f.print(date);
+    }
 }
