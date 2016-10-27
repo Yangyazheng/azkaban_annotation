@@ -31,65 +31,82 @@ import azkaban.scheduler.ScheduleStatisticManager;
 import azkaban.scheduler.ScheduleManagerException;
 
 public class SchedulerStatistics {
-  public static Map<String, Object> getStatistics(
-      int scheduleId, AzkabanWebServer server)
-      throws ScheduleManagerException {
-    if (ScheduleStatisticManager.getCacheDirectory() == null) {
-      ScheduleStatisticManager.setCacheFolder(
-          new File(server.getServerProps().getString("cache.directory", "cache")));
-    }
-    Map<String, Object> data = ScheduleStatisticManager.loadCache(scheduleId);
-    if (data != null) {
-      return data;
-    }
-
-    // Calculate data and cache it
-    data = calculateStats(scheduleId, server);
-    ScheduleStatisticManager.saveCache(scheduleId, data);
-    return data;
-  }
-
-  private static Map<String, Object> calculateStats(
-      int scheduleId, AzkabanWebServer server)
-      throws ScheduleManagerException {
-    Map<String, Object> data = new HashMap<String, Object>();
-    ExecutorManagerAdapter executorManager = server.getExecutorManager();
-    ScheduleManager scheduleManager = server.getScheduleManager();
-    Schedule schedule = scheduleManager.getSchedule(scheduleId);
-
-    try {
-      List<ExecutableFlow> executables = executorManager.getExecutableFlows(
-          schedule.getProjectId(), schedule.getFlowName(), 0,
-          ScheduleStatisticManager.STAT_NUMBERS, Status.SUCCEEDED);
-
-      long average = 0;
-      long min = Integer.MAX_VALUE;
-      long max = 0;
-      if (executables.isEmpty()) {
-        average = 0;
-        min = 0;
-        max = 0;
-      } else {
-        for (ExecutableFlow flow : executables) {
-          long time = flow.getEndTime() - flow.getStartTime();
-          average += time;
-          if (time < min) {
-            min = time;
-          }
-          if (time > max) {
-            max = time;
-          }
+//schedule:计划，触发器里面的概念
+    /**
+     * 获取schedule对应的执行数据：平均、最大、最小执行时间，
+     * （如果缓存目录不存在，会新创建一个）
+     * @param scheduleId
+     * @param server
+     * @return
+     * @throws ScheduleManagerException
+     */
+    public static Map<String, Object> getStatistics(
+            int scheduleId, AzkabanWebServer server)
+            throws ScheduleManagerException {
+        if (ScheduleStatisticManager.getCacheDirectory() == null) {
+            ScheduleStatisticManager.setCacheFolder(
+                    new File(server.getServerProps().getString("cache.directory", "cache")));
         }
-        average /= executables.size();
-      }
+        Map<String, Object> data = ScheduleStatisticManager.loadCache(scheduleId);
+        if (data != null) {
+            return data;
+        }
 
-      data.put("average", average);
-      data.put("min", min);
-      data.put("max", max);
-    } catch (ExecutorManagerException e) {
-      e.printStackTrace();
+        // Calculate data and cache it
+        data = calculateStats(scheduleId, server);
+        ScheduleStatisticManager.saveCache(scheduleId, data);
+        return data;
     }
 
-    return data;
-  }
+    /**
+     * 计算schedule的平均、最大、最小执行时间
+     *
+     * @param scheduleId
+     * @param server
+     * @return
+     * @throws ScheduleManagerException
+     */
+    private static Map<String, Object> calculateStats(
+            int scheduleId, AzkabanWebServer server)
+            throws ScheduleManagerException {
+        Map<String, Object> data = new HashMap<String, Object>();
+        ExecutorManagerAdapter executorManager = server.getExecutorManager();
+        ScheduleManager scheduleManager = server.getScheduleManager();
+        Schedule schedule = scheduleManager.getSchedule(scheduleId);
+
+        try {
+            List<ExecutableFlow> executables = executorManager.getExecutableFlows(
+                    schedule.getProjectId(), schedule.getFlowName(), 0,
+                    ScheduleStatisticManager.STAT_NUMBERS, Status.SUCCEEDED);
+
+            long average = 0;
+            long min = Integer.MAX_VALUE;
+            long max = 0;
+            if (executables.isEmpty()) {
+                average = 0;
+                min = 0;
+                max = 0;
+            } else {
+                for (ExecutableFlow flow : executables) {
+                    long time = flow.getEndTime() - flow.getStartTime();
+                    average += time;
+                    if (time < min) {
+                        min = time;
+                    }
+                    if (time > max) {
+                        max = time;
+                    }
+                }
+                average /= executables.size();
+            }
+
+            data.put("average", average);
+            data.put("min", min);
+            data.put("max", max);
+        } catch (ExecutorManagerException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
 }
