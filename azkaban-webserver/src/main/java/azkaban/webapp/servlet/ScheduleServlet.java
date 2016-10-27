@@ -69,6 +69,9 @@ import azkaban.utils.Utils;
 import azkaban.webapp.AzkabanWebServer;
 import azkaban.webapp.SchedulerStatistics;
 
+/**
+ *
+ */
 public class ScheduleServlet extends LoginAbstractAzkabanServlet {
   private static final long serialVersionUID = 1L;
   private static final Logger logger = Logger.getLogger(ScheduleServlet.class);
@@ -88,7 +91,7 @@ public class ScheduleServlet extends LoginAbstractAzkabanServlet {
   @Override
   protected void handleGet(HttpServletRequest req, HttpServletResponse resp,
       Session session) throws ServletException, IOException {
-    if (hasParam(req, "ajax")) {
+    if (hasParam(req, "ajax")) {//处理带"ajax"参数的请求
       handleAJAXAction(req, resp, session);
     } else if (hasParam(req, "calendar")) {
       handleGetScheduleCalendar(req, resp, session);
