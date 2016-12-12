@@ -27,8 +27,12 @@ public class SystemMemoryInfo {
   private static String MEMINFO_FILE = "/proc/meminfo"; 
   private static boolean memCheckEnabled;
   private static long freeMemAmount = 0;
-  private static final long LOW_MEM_THRESHOLD = 3L*1024L*1024L; //3 GB
-
+    //modified start----------------
+    //modified by yazheng.yang@hand-china.com
+    //修改了最低内存限制原值:  3L*1024L*1024L
+//  private static final long LOW_MEM_THRESHOLD = 3L*1024L*1024L; //3 GB
+    private static final long LOW_MEM_THRESHOLD = 200L*1024L; //200 M
+    //modified end-------------------
   private static ScheduledExecutorService scheduledExecutorService;
 
   public static void init(int memCheckInterval) {
