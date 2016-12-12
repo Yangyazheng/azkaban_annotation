@@ -19,11 +19,37 @@ package azkaban.alert;
 import azkaban.executor.ExecutableFlow;
 import azkaban.sla.SlaOption;
 
+/**
+ * 任务流执行结果提示接口
+ */
 public interface Alerter {
+    /**
+     * 任务流执行成功提示
+     * @param exflow 执行流
+     * @throws Exception
+     */
   void alertOnSuccess(ExecutableFlow exflow) throws Exception;
+
+    /**
+     * 任务流执行错误提示
+     * @param exflow
+     * @param extraReasons 出错原因，可以是多个String类型的多参数
+     * @throws Exception
+     */
   void alertOnError(ExecutableFlow exflow, String ... extraReasons) throws Exception;
 
+    /**
+     * 任务流首次执行错误提示
+     * @param exflow
+     * @throws Exception
+     */
   void alertOnFirstError(ExecutableFlow exflow) throws Exception;
 
+    /**
+     *
+     * @param slaOption
+     * @param slaMessage
+     * @throws Exception
+     */
   void alertOnSla(SlaOption slaOption, String slaMessage) throws Exception;
 }

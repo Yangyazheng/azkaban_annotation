@@ -29,6 +29,9 @@ import azkaban.utils.EmailMessage;
 import azkaban.utils.Emailer;
 import azkaban.utils.Utils;
 
+/**
+ * 默认邮件处理（发送多种不同信息的邮件）
+ */
 public class DefaultMailCreator implements MailCreator {
   public static final String DEFAULT_MAIL_CREATOR = "default";
   private static HashMap<String, MailCreator> registeredCreators =
@@ -55,6 +58,17 @@ public class DefaultMailCreator implements MailCreator {
     registerCreator(DEFAULT_MAIL_CREATOR, defaultCreator);
   }
 
+    /**
+     * 创建首次错误邮件消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   @Override
   public boolean createFirstErrorMessage(ExecutableFlow flow,
       EmailMessage message, String azkabanName, String scheme,
@@ -117,6 +131,17 @@ public class DefaultMailCreator implements MailCreator {
     return false;
   }
 
+    /**
+     * 创建任务流错误邮件消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   @Override
   public boolean createErrorEmail(ExecutableFlow flow, EmailMessage message,
       String azkabanName, String scheme, String clientHostname,
@@ -170,6 +195,17 @@ public class DefaultMailCreator implements MailCreator {
     return false;
   }
 
+    /**
+     * 创建任务流执行成功的邮件通知消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   @Override
   public boolean createSuccessEmail(ExecutableFlow flow, EmailMessage message,
       String azkabanName, String scheme, String clientHostname,
@@ -209,6 +245,11 @@ public class DefaultMailCreator implements MailCreator {
     return false;
   }
 
+    /**
+     * 将毫秒转为时间字符串
+     * @param timeInMS
+     * @return
+     */
   private static String convertMSToString(long timeInMS) {
     if (timeInMS < 0) {
       return "N/A";

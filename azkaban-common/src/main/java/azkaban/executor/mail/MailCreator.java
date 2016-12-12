@@ -19,15 +19,51 @@ package azkaban.executor.mail;
 import azkaban.executor.ExecutableFlow;
 import azkaban.utils.EmailMessage;
 
+/**
+ * 邮件内容创建器
+ */
 public interface MailCreator {
+    /**
+     * 创建首次错误邮件消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   public boolean createFirstErrorMessage(ExecutableFlow flow,
       EmailMessage message, String azkabanName, String scheme,
       String clientHostname, String clientPortNumber, String... vars);
 
+    /**
+     * 创建任务流错误邮件消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   public boolean createErrorEmail(ExecutableFlow flow, EmailMessage message,
       String azkabanName, String scheme, String clientHostname,
       String clientPortNumber, String... vars);
 
+    /**
+     * 创建任务流执行成功的邮件通知消息
+     * @param flow
+     * @param message
+     * @param azkabanName
+     * @param scheme
+     * @param clientHostname
+     * @param clientPortNumber
+     * @param vars
+     * @return
+     */
   public boolean createSuccessEmail(ExecutableFlow flow, EmailMessage message,
       String azkabanName, String scheme, String clientHostname,
       String clientPortNumber, String... vars);

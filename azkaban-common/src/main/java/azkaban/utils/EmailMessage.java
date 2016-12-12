@@ -41,6 +41,10 @@ import org.apache.log4j.Logger;
 
 import com.sun.mail.smtp.SMTPTransport;
 
+/**
+ * 邮件消息类，
+ * 封装了一次发送邮件的所有需要的数据
+ */
 public class EmailMessage {
   private final Logger logger = Logger.getLogger(EmailMessage.class);
 
@@ -59,6 +63,7 @@ public class EmailMessage {
   private StringBuffer _body = new StringBuffer();
   private static int _mailTimeout = 10000;
   private static int _connectionTimeout = 10000;
+    //设置邮件发送服务的最大队列大小
   private static long _totalAttachmentMaxSizeInByte = 1024 * 1024 * 1024; // 1
                                                                           // GB
 
@@ -140,10 +145,23 @@ public class EmailMessage {
     return this;
   }
 
+    /**
+     * 添加附件
+     * @param file
+     * @return
+     * @throws MessagingException
+     */
   public EmailMessage addAttachment(File file) throws MessagingException {
     return addAttachment(file.getName(), file);
   }
 
+    /**
+     * 增加附件
+     * @param attachmentName
+     * @param file
+     * @return
+     * @throws MessagingException
+     */
   public EmailMessage addAttachment(String attachmentName, File file)
       throws MessagingException {
 
@@ -164,6 +182,13 @@ public class EmailMessage {
     return this;
   }
 
+    /**
+     * 增加附件
+     * @param attachmentName
+     * @param stream
+     * @return
+     * @throws MessagingException
+     */
   public EmailMessage addAttachment(String attachmentName, InputStream stream)
       throws MessagingException {
     BodyPart attachmentPart = new MimeBodyPart(stream);
@@ -190,6 +215,10 @@ public class EmailMessage {
     }
   }
 
+    /**
+     * 发送邮件
+     * @throws MessagingException
+     */
   public void sendEmail() throws MessagingException {
     checkSettings();
     Properties props = new Properties();

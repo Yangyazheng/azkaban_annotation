@@ -32,6 +32,9 @@ import azkaban.executor.mail.DefaultMailCreator;
 import azkaban.executor.mail.MailCreator;
 import azkaban.sla.SlaOption;
 
+/**
+ * 任务流执行结果邮件通知器
+ */
 public class Emailer extends AbstractMailer implements Alerter {
   private static Logger logger = Logger.getLogger(Emailer.class);
 
@@ -193,22 +196,44 @@ public class Emailer extends AbstractMailer implements Alerter {
     return failedJobs;
   }
 
+    /**
+     * 任务流执行成功提示
+     * @param exflow 执行流
+     * @throws Exception
+     */
   @Override
   public void alertOnSuccess(ExecutableFlow exflow) throws Exception {
     sendSuccessEmail(exflow);
   }
 
+    /**
+     * 任务流执行错误提示
+     * @param exflow
+     * @param extraReasons 出错原因，可以是多个String类型的多参数
+     * @throws Exception
+     */
   @Override
   public void alertOnError(ExecutableFlow exflow, String... extraReasons)
       throws Exception {
     sendErrorEmail(exflow, extraReasons);
   }
 
+    /**
+     * 任务流首次执行错误提示
+     * @param exflow
+     * @throws Exception
+     */
   @Override
   public void alertOnFirstError(ExecutableFlow exflow) throws Exception {
     sendFirstErrorMessage(exflow);
   }
 
+    /**
+     *
+     * @param slaOption
+     * @param slaMessage
+     * @throws Exception
+     */
   @Override
   public void alertOnSla(SlaOption slaOption, String slaMessage)
       throws Exception {
