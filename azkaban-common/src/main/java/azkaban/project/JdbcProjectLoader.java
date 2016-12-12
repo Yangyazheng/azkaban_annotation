@@ -60,7 +60,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
   private static final int CHUCK_SIZE = 1024 * 1024 * 10;
   private File tempDir;
 
-  private EncodingType defaultEncodingType = EncodingType.GZIP;
+    //modified start----------------
+    //modified by yazheng.yang@hand-china.com
+    //将数据库中json存储形式改为直接文本存储
+//  private EncodingType defaultEncodingType = EncodingType.GZIP;
+    private EncodingType defaultEncodingType = EncodingType.PLAIN;
+    //modified end
 
   public JdbcProjectLoader(Props props) {
     super(props);
