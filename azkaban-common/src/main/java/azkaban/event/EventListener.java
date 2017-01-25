@@ -16,6 +16,13 @@
 
 package azkaban.event;
 
+/**
+ * 事件监听接口
+ */
 public interface EventListener {
+    /**
+     * 处理事件
+     * @param event
+     */
   public void handleEvent(Event event);
 }

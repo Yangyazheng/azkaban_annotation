@@ -16,7 +16,13 @@
 
 package azkaban.event;
 
+/**
+ * 事件类型
+ */
 public class Event {
+    /**
+     * 事件种类：流开始、流结束、任务开始、任务结束、任务状态改变、流外部更新、任务外部更新
+     */
   public enum Type {
     FLOW_STARTED,
     FLOW_FINISHED,

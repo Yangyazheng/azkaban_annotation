@@ -19,6 +19,10 @@ package azkaban.event;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * azkaban event处理器，
+ * 通过将注册的事件放入列表中，每次遍历列表轮询，进行事件处理
+ */
 public class EventHandler {
   private HashSet<EventListener> listeners = new HashSet<EventListener>();
 
@@ -29,6 +33,10 @@ public class EventHandler {
     listeners.add(listener);
   }
 
+    /**
+     * 触发事件监听器，遍历整个注册事件列表，调用每个监听器的处理事件方法
+     * @param event
+     */
   public void fireEventListeners(Event event) {
     ArrayList<EventListener> listeners =
         new ArrayList<EventListener>(this.listeners);
@@ -37,6 +45,10 @@ public class EventHandler {
     }
   }
 
+    /**
+     * 移除事件监听
+     * @param listener
+     */
   public void removeListener(EventListener listener) {
     listeners.remove(listener);
   }
