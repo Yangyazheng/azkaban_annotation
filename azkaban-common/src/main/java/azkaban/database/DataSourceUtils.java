@@ -30,6 +30,11 @@ import java.sql.SQLFeatureNotSupportedException;
 
 import azkaban.utils.Props;
 
+/**
+ * azkaban数据源工具类，
+ * 里面包含两种实现了 AzkabanDataSource的抽象方法的类：
+ * EmbeddedH2BasicDataSource和MySQLBasicDataSource
+ */
 public class DataSourceUtils {
 
   private static Logger logger = Logger.getLogger(DataSourceUtils.class);
@@ -122,6 +127,7 @@ public class DataSourceUtils {
     //modified start----------------
     //modified by yazheng.yang@hand-china.com
     //private DataSourceUtils() {
+    //可以访问到和使用到数据源
   protected DataSourceUtils() {
   }
     //modified end-------------------
@@ -154,11 +160,19 @@ public class DataSourceUtils {
       }
     }
 
+      /**
+       * 是否允许主键重复
+       * @return
+       */
     @Override
     public boolean allowsOnDuplicateKey() {
       return true;
     }
 
+      /**
+       * 默认使用MySQL数据库
+       * @return
+       */
     @Override
     public String getDBType() {
       return "mysql";
@@ -172,6 +186,9 @@ public class DataSourceUtils {
       }
       //add end-------------------------------
 
+      /**
+       * 监控与数据库之间是否连接没有断开
+       */
     private class MonitorThread extends Thread {
       private static final long MONITOR_THREAD_WAIT_INTERVAL_MS = 30 * 1000;
       private boolean shutdown = false;

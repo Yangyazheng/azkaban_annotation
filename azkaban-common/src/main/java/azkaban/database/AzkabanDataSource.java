@@ -18,8 +18,19 @@ package azkaban.database;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+/**
+ * azkaban数据源抽象类
+ */
 public abstract class AzkabanDataSource extends BasicDataSource {
+    /**
+     * 是否允许主键重复
+     * @return
+     */
   public abstract boolean allowsOnDuplicateKey();
 
+    /**
+     * 数据库类型
+     * @return
+     */
   public abstract String getDBType();
 }

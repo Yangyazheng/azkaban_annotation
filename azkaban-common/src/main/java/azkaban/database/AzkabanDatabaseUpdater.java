@@ -30,6 +30,9 @@ import azkaban.database.AzkabanDatabaseSetup;
 import azkaban.utils.Props;
 import azkaban.server.AzkabanServer;
 
+/**
+ * azkaban数据库更新器
+ */
 public class AzkabanDatabaseUpdater {
   private static final Logger logger = Logger
       .getLogger(AzkabanDatabaseUpdater.class);
@@ -71,6 +74,14 @@ public class AzkabanDatabaseUpdater {
     runDatabaseUpdater(props, scriptDir, updateDB);
   }
 
+    /**
+     * 调用更新
+     * @param props
+     * @param sqlDir
+     * @param updateDB
+     * @throws IOException
+     * @throws SQLException
+     */
   public static void runDatabaseUpdater(Props props, String sqlDir,
       boolean updateDB) throws IOException, SQLException {
     logger.info("Use scripting directory " + sqlDir);

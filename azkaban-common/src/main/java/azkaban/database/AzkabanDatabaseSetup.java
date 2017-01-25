@@ -41,6 +41,9 @@ import azkaban.database.DataSourceUtils.PropertyType;
 import azkaban.utils.FileIOUtils;
 import azkaban.utils.Props;
 
+/**
+ * azkaban数据库初始化类
+ */
 public class AzkabanDatabaseSetup {
   private static final Logger logger = Logger
       .getLogger(AzkabanDatabaseSetup.class);
@@ -163,6 +166,11 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 从database.properties中加载数据库配置属性
+     * @return
+     * @throws IOException
+     */
   private Props loadDBProps() throws IOException {
     File dbPropsFile = new File(this.scriptPath, "database.properties");
 
@@ -199,6 +207,10 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 加载已经创建的表
+     * @throws SQLException
+     */
   private void loadInstalledTables() throws SQLException {
     logger.info("Searching for installed tables");
     Connection conn = null;
@@ -216,6 +228,9 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 查找没有创建的表
+     */
   private void findMissingTables() {
     File directory = new File(scriptPath);
     File[] createScripts =
@@ -233,6 +248,10 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 查找出就版本的表,放入更新列表中,
+     * 依据：根据SQL脚本路径查看这个表有没有对应的更新表脚本;缺失的表
+     */
   private void findOutOfDateTables() {
     for (String key : tables.keySet()) {
       String version = tables.get(key);
@@ -293,6 +312,11 @@ public class AzkabanDatabaseSetup {
     return versions;
   }
 
+    /**
+     * 创建新表
+     * @throws SQLException
+     * @throws IOException
+     */
   private void createNewTables() throws SQLException, IOException {
     Connection conn = dataSource.getConnection();
     conn.setAutoCommit(false);
@@ -314,6 +338,11 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 更新表
+     * @throws SQLException
+     * @throws IOException
+     */
   private void updateTables() throws SQLException, IOException {
     Connection conn = dataSource.getConnection();
     conn.setAutoCommit(false);
@@ -337,6 +366,16 @@ public class AzkabanDatabaseSetup {
     }
   }
 
+    /**
+     * 运行SQL脚本
+     * @param conn
+     * @param table
+     * @param version
+     * @param dbType
+     * @param update
+     * @throws IOException
+     * @throws SQLException
+     */
   private void runTableScripts(Connection conn, String table, String version,
       String dbType, boolean update) throws IOException, SQLException {
     String scriptName = "";

@@ -63,6 +63,12 @@ public abstract class AbstractJdbcLoader {
     dataSource = DataSourceUtils.getDataSource(props);
   }
 
+  /**
+   * 获取与数据库的链接connection
+   * @param autoCommit
+   * @return
+   * @throws IOException
+     */
   protected Connection getDBConnection(boolean autoCommit) throws IOException {
     Connection connection = null;
     try {
@@ -84,6 +90,9 @@ public abstract class AbstractJdbcLoader {
     return dataSource.allowsOnDuplicateKey();
   }
 
+  /**
+   * 获取结果集中第一条记录的第一个整数
+   */
   public static class IntHandler implements ResultSetHandler<Integer> {
     @Override
     public Integer handle(ResultSet rs) throws SQLException {
@@ -95,6 +104,9 @@ public abstract class AbstractJdbcLoader {
     }
   }
 
+  /**
+   * 获取结果集中的第一条记录的第一个字符串
+   */
   public static class SingleStringHandler implements ResultSetHandler<String> {
     @Override
     public String handle(ResultSet rs) throws SQLException {
@@ -106,6 +118,9 @@ public abstract class AbstractJdbcLoader {
     }
   }
 
+  /**
+   * 获取结果集中所有记录的第一个整数
+   */
   public static class IntListHandler implements
       ResultSetHandler<ArrayList<Integer>> {
     @Override
@@ -119,6 +134,9 @@ public abstract class AbstractJdbcLoader {
     }
   }
 
+  /**
+   * 获取结果集当中所有记录的第一个字符串
+   */
   public static class StringListHandler implements
       ResultSetHandler<ArrayList<String>> {
     @Override
