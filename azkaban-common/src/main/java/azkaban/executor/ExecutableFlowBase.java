@@ -29,6 +29,9 @@ import azkaban.flow.SpecialJobTypes;
 import azkaban.project.Project;
 import azkaban.utils.TypedMapWrapper;
 
+/**
+ * 任务流节点，不是普通任务（非普通job）
+ */
 public class ExecutableFlowBase extends ExecutableNode {
   public static final String FLOW_ID_PARAM = "flowId";
   public static final String NODES_PARAM = "nodes";
@@ -45,6 +48,13 @@ public class ExecutableFlowBase extends ExecutableNode {
       new HashMap<String, FlowProps>();
   private String flowId;
 
+    /**
+     * 初始化流，并指定父任务流，当前任务类型是任务流
+     * @param project
+     * @param node
+     * @param flow
+     * @param parent
+     */
   public ExecutableFlowBase(Project project, Node node, Flow flow,
       ExecutableFlowBase parent) {
     super(node, parent);
@@ -63,6 +73,10 @@ public class ExecutableFlowBase extends ExecutableNode {
     return -1;
   }
 
+    /**
+     * 从后往前找，寻找projectId(存放在project的根流中)
+     * @return
+     */
   public int getProjectId() {
     if (this.getParentFlow() != null) {
       return this.getParentFlow().getProjectId();
@@ -111,25 +125,32 @@ public class ExecutableFlowBase extends ExecutableNode {
     return flowId;
   }
 
+    /**
+     * 根据project和flow中的信息设置任务流中的executableNodes，
+     * 以及根据依赖边设置入口任务和出口任务（依赖的任务和依赖它的任务）
+     * @param project
+     * @param flow
+     */
   protected void setFlow(Project project, Flow flow) {
     this.flowId = flow.getId();
     flowProps.putAll(flow.getAllFlowProps());
 
     for (Node node : flow.getNodes()) {
       String id = node.getId();
-      if (node.getType().equals(SpecialJobTypes.EMBEDDED_FLOW_TYPE)) {
+      if (node.getType().equals(SpecialJobTypes.EMBEDDED_FLOW_TYPE)) {//内嵌任务流
         String embeddedFlowId = node.getEmbeddedFlowId();
         Flow subFlow = project.getFlow(embeddedFlowId);
 
         ExecutableFlowBase embeddedFlow =
             new ExecutableFlowBase(project, node, subFlow, this);
         executableNodes.put(id, embeddedFlow);
-      } else {
+      } else {//普通任务
         ExecutableNode exNode = new ExecutableNode(node, this);
         executableNodes.put(id, exNode);
       }
     }
 
+    //根据依赖边设置入口任务和出口任务（依赖的任务和依赖它的任务）
     for (Edge edge : flow.getEdges()) {
       ExecutableNode sourceNode = executableNodes.get(edge.getSourceId());
       ExecutableNode targetNode = executableNodes.get(edge.getTargetId());
@@ -151,6 +172,11 @@ public class ExecutableFlowBase extends ExecutableNode {
     return executableNodes.get(id);
   }
 
+    /**
+     * 根据id获取任务node
+     * @param ids
+     * @return
+     */
   public ExecutableNode getExecutableNodePath(String ids) {
     String[] split = ids.split(":");
     return getExecutableNodePath(split);
@@ -160,6 +186,13 @@ public class ExecutableFlowBase extends ExecutableNode {
     return getExecutableNodePath(this, ids, 0);
   }
 
+    /**
+     * 根据id递归查找，获取任务node（并采取防止死循环递归）
+     * @param flow
+     * @param ids
+     * @param currentIdIdx
+     * @return
+     */
   private ExecutableNode getExecutableNodePath(ExecutableFlowBase flow,
       String[] ids, int currentIdIdx) {
     ExecutableNode node = flow.getExecutableNode(ids[currentIdIdx]);
@@ -179,6 +212,10 @@ public class ExecutableFlowBase extends ExecutableNode {
 
   }
 
+    /**
+     * 获取开始任务（那些没有依赖其他任务的任务节点）
+     * @return
+     */
   public List<String> getStartNodes() {
     if (startNodes == null) {
       startNodes = new ArrayList<String>();
@@ -192,6 +229,10 @@ public class ExecutableFlowBase extends ExecutableNode {
     return startNodes;
   }
 
+    /**
+     * 获取结尾任务
+     * @return
+     */
   public List<String> getEndNodes() {
     if (endNodes == null) {
       endNodes = new ArrayList<String>();

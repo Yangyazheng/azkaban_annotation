@@ -32,6 +32,7 @@ import azkaban.utils.TypedMapWrapper;
 
 /**
  * Base Executable that nodes and flows are based.
+ * 执行过程中流里面的job、任务流的基类，封装了任务流运行过程中任务或者是任务流所需要的信息
  */
 public class ExecutableNode {
   public static final String ID_PARAM = "id";
@@ -79,6 +80,11 @@ public class ExecutableNode {
     this.propsSource = node.getPropsSource();
   }
 
+    /**
+     * 初始化任务，并指定所在的流
+     * @param node
+     * @param parent
+     */
   public ExecutableNode(Node node, ExecutableFlowBase parent) {
     this(node.getId(), node.getType(), node.getJobSource(), node
         .getPropsSource(), parent);
@@ -228,6 +234,9 @@ public class ExecutableNode {
     this.attempt = attempt;
   }
 
+    /**
+     * 重置流信息，用于尝试着重新执行，进入就绪状态
+     */
   public void resetForRetry() {
     ExecutionAttempt pastAttempt = new ExecutionAttempt(attempt, this);
     attempt++;
@@ -256,10 +265,19 @@ public class ExecutableNode {
     return array;
   }
 
+    /**
+     * 获取用分隔符表示的节点id，从根节点开始一直到当前节点
+     * @return
+     */
   public String getNestedId() {
     return getPrintableId(":");
   }
 
+    /**
+     * 获取用分隔符表示的节点id，从根节点开始一直到当前节点
+     * @param delimiter
+     * @return
+     */
   public String getPrintableId(String delimiter) {
     if (this.getParentFlow() == null
         || this.getParentFlow() instanceof ExecutableFlow) {
@@ -312,6 +330,10 @@ public class ExecutableNode {
     }
   }
 
+    /**
+     * 从配置信息中初始化执行节点
+     * @param wrappedMap
+     */
   @SuppressWarnings("unchecked")
   public void fillExecutableFromMapObject(
       TypedMapWrapper<String, Object> wrappedMap) {
@@ -359,6 +381,10 @@ public class ExecutableNode {
     fillExecutableFromMapObject(wrapper);
   }
 
+    /**
+     * 将当前节点的信息封装在map中
+     * @return
+     */
   public Map<String, Object> toUpdateObject() {
     Map<String, Object> updatedNodeMap = new HashMap<String, Object>();
     updatedNodeMap.put(ID_PARAM, getId());
@@ -404,6 +430,10 @@ public class ExecutableNode {
     applyUpdateObject(wrapper);
   }
 
+    /**
+     * 取消当前节点
+     * @param cancelTime
+     */
   public void cancelNode(long cancelTime) {
     if (this.status == Status.DISABLED) {
       skipNode(cancelTime);
@@ -415,6 +445,10 @@ public class ExecutableNode {
     }
   }
 
+    /**
+     * 跳过当前节点
+     * @param skipTime
+     */
   public void skipNode(long skipTime) {
     this.setStatus(Status.SKIPPED);
     this.setStartTime(skipTime);
@@ -422,6 +456,10 @@ public class ExecutableNode {
     this.setUpdateTime(skipTime);
   }
 
+    /**
+     * 更新尝试运行的历史信息
+     * @param pastAttemptsList
+     */
   private void updatePastAttempts(List<Object> pastAttemptsList) {
     if (pastAttemptsList == null) {
       return;

@@ -22,16 +22,24 @@ import java.util.Map;
 
 import azkaban.utils.Utils;
 
+/**
+ * 任务流中的每个节点，可以是普通任务，也可以是嵌套的任务流
+ */
 public class Node {
   private final String id;
   private String jobSource;
   private String propsSource;
 
+  //存放节点在页面中显示的位置（页面中图形化显示流中的依赖关系）
   private Point2D position = null;
   private int level;
   private int expectedRunTimeSec = 1;
+    /**
+     * @see azkaban.flow.SpecialJobTypes 特殊任务类型
+     */
   private String type;
 
+    //如果当前任务节点代表的是一个引用的任务流，那么该字段非空
   private String embeddedFlowId;
 
   public Node(String id) {
@@ -41,7 +49,7 @@ public class Node {
   /**
    * Clones nodes
    *
-   * @param node
+   * @param clone
    */
   public Node(Node clone) {
     this.id = clone.id;
@@ -113,6 +121,11 @@ public class Node {
     return embeddedFlowId;
   }
 
+    /**
+     * 用配置信息创建Node对象
+     * @param obj
+     * @return
+     */
   @SuppressWarnings("unchecked")
   public static Node fromObject(Object obj) {
     Map<String, Object> mapObj = (Map<String, Object>) obj;

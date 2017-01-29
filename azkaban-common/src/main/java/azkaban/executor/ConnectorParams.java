@@ -16,6 +16,9 @@
 
 package azkaban.executor;
 
+/**
+ * 服务器连接请求中的参数名称常量类
+ */
 public interface ConnectorParams {
   public static final String EXECUTOR_ID_PARAM = "executorId";
   public static final String ACTION_PARAM = "action";

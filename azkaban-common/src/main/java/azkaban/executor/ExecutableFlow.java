@@ -27,6 +27,9 @@ import azkaban.flow.Flow;
 import azkaban.project.Project;
 import azkaban.utils.TypedMapWrapper;
 
+/**
+ * 任务节点，普通job
+ */
 public class ExecutableFlow extends ExecutableFlowBase {
   public static final String EXECUTIONID_PARAM = "executionId";
   public static final String EXECUTIONPATH_PARAM = "executionPath";
@@ -221,6 +224,11 @@ public class ExecutableFlow extends ExecutableFlowBase {
     return flowObj;
   }
 
+    /**
+     * 根据配置信息生成任务对象
+     * @param obj
+     * @return
+     */
   @SuppressWarnings("unchecked")
   public static ExecutableFlow createExecutableFlowFromObject(Object obj) {
     ExecutableFlow exFlow = new ExecutableFlow();

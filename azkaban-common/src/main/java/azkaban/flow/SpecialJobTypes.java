@@ -16,6 +16,9 @@
 
 package azkaban.flow;
 
+/**
+ * 特殊任务类型
+ */
 public class SpecialJobTypes {
   public static final String BRANCH_START_TYPE = "branch.start";
   public static final String BRANCH_END_TYPE = "branch.end";
