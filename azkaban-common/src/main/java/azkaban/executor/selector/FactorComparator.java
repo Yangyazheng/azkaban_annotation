@@ -19,7 +19,10 @@ package azkaban.executor.selector;
 import java.util.Comparator;
 import org.apache.log4j.Logger;
 
-/** wrapper class for a factor comparator .
+/**
+ * 主要作用：携带比较器，
+ * 在验证参数合法性之后创建包裹对象
+ * wrapper class for a factor comparator .
  *@param T: the type of the objects to be compared.
  */
 public final class FactorComparator<T>{

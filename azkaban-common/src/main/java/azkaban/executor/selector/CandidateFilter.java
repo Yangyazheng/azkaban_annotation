@@ -23,7 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 
 
-/** Abstract class for a candidate filter.
+/**
+ * 候选者过滤抽象类，实现大部分过滤逻辑
+ * Abstract class for a candidate filter.
  *  this class contains implementation of most of the core logics. Implementing classes is expected only to
  *  register filters using the provided register function.
  */

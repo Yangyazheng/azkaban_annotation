@@ -21,14 +21,22 @@ import java.util.Collection;
 import java.util.Collections;
 import org.apache.log4j.Logger;
 
-/** Implementation of the CandidateSelector.
+/**
+ * 选择器实现
+ * Implementation of the CandidateSelector.
  *  @param K executor object type.
  *  @param V dispatching object type.
  * */
 public class CandidateSelector<K extends Comparable<K>, V> implements Selector<K, V> {
   private static Logger logger = Logger.getLogger(CandidateComparator.class);
 
+    /**
+     * 过滤算子
+     */
   private CandidateFilter<K,V> filter;
+    /**
+     * 比较算子
+     */
   private CandidateComparator<K> comparator;
 
   /**constructor of the class.

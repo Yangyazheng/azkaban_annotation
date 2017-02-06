@@ -26,6 +26,7 @@ import azkaban.executor.Executor;
 import azkaban.executor.ExecutorInfo;
 
 /**
+ * 执行节点过滤器
  * De-normalized version of the candidateFilter, which also contains the implementation of the factor filters.
  * */
 public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFlow> {
@@ -47,7 +48,7 @@ public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFl
 
   /**<pre>
    * static initializer of the class.
-   * We will build the filter repository here.
+   * We will build the filter repository here.默认实现的几个过滤器，根据需要再注册使用，
    * when a new filter is added, please do remember to register it here.
    * </pre>
    * */
@@ -88,6 +89,7 @@ public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFl
   }
 
   /**<pre>
+   * 目前只是查看节点是否还能接受任务，若不能返回false，过滤掉这个执行节点的候选资格
    * function to register the static remaining flow size filter.
    * NOTE : this is a static filter which means the filter will be filtering based on the system standard which is not
    *        Coming for the passed flow.
@@ -115,6 +117,7 @@ public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFl
   }
 
   /**<pre>
+   * 过滤剩余内存大小不足预定值的执行节点，默认阈值为6G内存大小
    * function to register the static Minimum Reserved Memory filter.
    * NOTE : this is a static filter which means the filter will be filtering based on the system standard which is not
    *        Coming for the passed flow.
@@ -145,7 +148,8 @@ public final class ExecutorFilter extends CandidateFilter<Executor, ExecutableFl
 
   /**
    * <pre>
-   * function to register the static Minimum Reserved Memory filter.
+   * 根据CPU占用率过滤达到阈值的执行节点，目前CPU占用率阈值为95%
+   * function to register the static Maximum used CPU filter.
    * NOTE :  this is a static filter which means the filter will be filtering based on the system standard which
    *        is not Coming for the passed flow.
    *        This filter will filter out any executors that the current CPU usage exceed 95%

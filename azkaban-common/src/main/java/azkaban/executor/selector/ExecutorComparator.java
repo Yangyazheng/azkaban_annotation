@@ -27,6 +27,7 @@ import azkaban.executor.ExecutorInfo;
 
 
 /**
+ * 执行节点比较器
  * De-normalized version of the CandidateComparator, which also contains the implementation of the factor comparators.
  * */
 public class ExecutorComparator extends CandidateComparator<Executor> {
@@ -40,11 +41,16 @@ public class ExecutorComparator extends CandidateComparator<Executor> {
     return comparatorCreatorRepository.keySet();
   }
 
+  //默认的执行节点比较器名称
   // factor comparator names
-  private static final String NUMOFASSIGNEDFLOW_COMPARATOR_NAME = "NumberOfAssignedFlowComparator";
-  private static final String MEMORY_COMPARATOR_NAME = "Memory";
-  private static final String LSTDISPATCHED_COMPARATOR_NAME = "LastDispatched";
-  private static final String CPUUSAGE_COMPARATOR_NAME = "CpuUsage";
+    //已分配任务数量
+    private static final String NUMOFASSIGNEDFLOW_COMPARATOR_NAME = "NumberOfAssignedFlowComparator";
+    //内存，先比较剩余内存大小，然后再比较剩余内存所占的比例
+    private static final String MEMORY_COMPARATOR_NAME = "Memory";
+    //上次分发任务时间，越早越好
+    private static final String LSTDISPATCHED_COMPARATOR_NAME = "LastDispatched";
+    //CPU使用率，越小越好
+    private static final String CPUUSAGE_COMPARATOR_NAME = "CpuUsage";
 
   /**
    * static initializer of the class.
@@ -107,6 +113,7 @@ public class ExecutorComparator extends CandidateComparator<Executor> {
   }
 
   /**<pre>
+   * 检查两个ExecutorInfo对象是否非空
    * helper function that does the object  on two statistics, comparator can leverage this function to provide
    * shortcuts if   the statistics object is missing from one or both sides of the executors.
    * </pre>
@@ -160,6 +167,7 @@ public class ExecutorComparator extends CandidateComparator<Executor> {
         ExecutorInfo stat2 = o2.getExecutorInfo();
 
         Integer result = 0;
+          //保证比较的两个节点的信息完整
         if (statisticsObjectCheck(stat1,stat2,NUMOFASSIGNEDFLOW_COMPARATOR_NAME,result)){
           return result;
         }
@@ -215,6 +223,7 @@ public class ExecutorComparator extends CandidateComparator<Executor> {
 
 
   /**<pre>
+   * 先比较剩余内存大小，然后再比较剩余内存所占的比例
    * function defines the Memory comparator.
    * Note: comparator firstly take the absolute value of the remaining memory, if both sides have the same value,
    *       it go further to check the percent of the remaining memory.

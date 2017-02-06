@@ -20,6 +20,7 @@ import java.util.Collection;
 
 
 /**<pre>
+ * 选择器接口
  *  Definition of the selector interface.
  *  an implementation of the selector interface provides the functionality
  *  to return a candidate from the candidateList that suits best for the dispatchingObject.

@@ -23,6 +23,8 @@ import azkaban.executor.ExecutableFlow;
 import azkaban.executor.Executor;
 
 /**<pre>
+ * 执行节点选择器，继承自CandidateSelector，实现{@link Selector}
+ * 用于根据过滤和比较规则产生最优的执行节点
  * Executor selector class implementation.
  * NOTE: This class is a de-generalized version of the CandidateSelector, which provides a
  *       clean and convenient constructor to take in filter and comparator name list and build

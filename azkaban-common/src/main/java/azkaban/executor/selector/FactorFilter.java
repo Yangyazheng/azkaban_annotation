@@ -18,7 +18,9 @@ package azkaban.executor.selector;
 
 import org.apache.log4j.Logger;
 
-/** wrapper class for a factor Filter .
+/**
+ * 主要用于携带过滤器，在验证参数合法性之后创建包裹对象
+ * wrapper class for a factor Filter .
  *@param T: the type of the objects to be compared.
  *@param V: the type of the object to be used for filtering.
  */

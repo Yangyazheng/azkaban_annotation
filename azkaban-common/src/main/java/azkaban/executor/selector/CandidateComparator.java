@@ -35,6 +35,7 @@ import azkaban.utils.Pair;
 public abstract class CandidateComparator<T> implements Comparator<T> {
   protected static Logger logger = Logger.getLogger(CandidateComparator.class);
 
+    //已经注册的比较器列表（key：通过getName得到的比较器名称，value：比较器本身）
   // internal repository of the registered comparators .
   private Map<String,FactorComparator<T>> factorComparatorList =
       new ConcurrentHashMap<String,FactorComparator<T>>();
@@ -44,7 +45,10 @@ public abstract class CandidateComparator<T> implements Comparator<T> {
    * */
   public abstract String getName();
 
-  /** tieBreak method which will kick in when the comparator list generated an equality result for
+  /**
+   * （加时赛）
+   * 保证比较之后最终只有一个胜出
+   * tieBreak method which will kick in when the comparator list generated an equality result for
    *  both sides. the tieBreak method will try best to make sure a stable result is returned.
    * */
   protected boolean tieBreak(T object1, T object2){
@@ -70,7 +74,9 @@ public abstract class CandidateComparator<T> implements Comparator<T> {
           comparator.getFactorName(), comparator.getWeight()));
   }
 
-  /** function returns the total weight of the registered comparators.
+  /**
+   * 获取所有比较器的权重总和
+   * function returns the total weight of the registered comparators.
    * @return the value of total weight.
    * */
   public int getTotalWeight(){
@@ -137,6 +143,7 @@ public abstract class CandidateComparator<T> implements Comparator<T> {
             comparator.getFactorName(), result, result1, result2));
       }
     }
+    //得分相同，采用加时赛区分出获胜者
     // in case of same score, use tie-breaker to stabilize the result.
     if (result1 == result2){
       boolean result = this.tieBreak(object1, object2);

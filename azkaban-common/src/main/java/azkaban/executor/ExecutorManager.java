@@ -1944,6 +1944,7 @@ public class ExecutorManager extends EventHandler implements
       if (choosenExecutor == null) {
         logger.info("Using dispatcher for execution id :"
           + exflow.getExecutionId());
+        //创建执行节点选择器，并选择最优的执行节点执行任务
         ExecutorSelector selector = new ExecutorSelector(filterList, comparatorWeightsMap);
         choosenExecutor = selector.getBest(availableExecutors, exflow);
       }
