@@ -16,6 +16,9 @@
 
 package azkaban.executor;
 
+/**
+ * azkaban任务、任务流执行状态
+ */
 public enum Status {
   READY(10),
   PREPARING(20),
