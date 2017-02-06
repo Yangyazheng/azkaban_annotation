@@ -19,6 +19,7 @@ package azkaban.executor;
 import java.util.Date;
 
 /**
+ * 封装执行节点发生的事件的相关信息
  * Class to represent events on Azkaban executors
  *
  * @author gaggarwa

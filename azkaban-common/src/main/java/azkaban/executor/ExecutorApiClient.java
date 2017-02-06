@@ -23,7 +23,8 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.util.EntityUtils;
 import azkaban.utils.RestfulApiClient;
 
-/** Client class that will be used to handle all Restful API calls between Executor and the host application.
+/**
+ * Client class that will be used to handle all Restful API calls between Executor and the host application.
  * */
 public class ExecutorApiClient extends RestfulApiClient<String> {
   private static ExecutorApiClient instance = null;

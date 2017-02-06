@@ -22,7 +22,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
- /** Class that exposes the statistics from the executor server.
+ /**
+  * 封装了执行节点的物理统计信息：剩余内存百分比、剩余内存、剩余处理流能力、已经执行的流的数量、上次被分发任务的时间、CPU占用率
+  * Class that exposes the statistics from the executor server.
   *  List of the statistics -
   *  remainingMemoryPercent;
   *  remainingMemory;

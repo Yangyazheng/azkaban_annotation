@@ -24,6 +24,7 @@ import azkaban.utils.Pair;
 
 /**
  * Comparator implicitly used in priority queue for QueuedExecutions.
+ * 执行队列中的优先级比较器(比较算子)
  */
 public final class ExecutableFlowPriorityComparator implements
   Comparator<Pair<ExecutionReference, ExecutableFlow>> {

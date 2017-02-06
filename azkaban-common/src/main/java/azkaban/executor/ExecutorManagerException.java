@@ -16,6 +16,9 @@
 
 package azkaban.executor;
 
+/**
+ * 封装执行节点管理过程中的异常信息
+ */
 public class ExecutorManagerException extends Exception {
   public enum Reason {
     SkippedExecution

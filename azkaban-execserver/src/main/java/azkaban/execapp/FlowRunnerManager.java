@@ -62,13 +62,14 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 import azkaban.utils.ThreadPoolExecutingListener;
 import azkaban.utils.TrackingThreadPool;
+import azkaban.executor.Status;
 
 /**
  * Execution manager for the server side execution.
  *
  * When a flow is submitted to FlowRunnerManager, it is the
- * {@link Status.PREPARING} status. When a flow is about to be executed by
- * FlowRunner, its status is updated to {@link Status.RUNNING}
+ * {@link Status#PREPARING} status. When a flow is about to be executed by
+ * FlowRunner, its status is updated to {@link Status#RUNNING}
  *
  * Two main data structures are used in this class to maintain flows.
  *
@@ -83,6 +84,20 @@ import azkaban.utils.TrackingThreadPool;
  * to find out the execution ids of the flows that are in the Status.PREPARING
  * status. The entries in this map is removed once the flow execution is
  * completed.
+ *
+ *
+ */
+
+/**
+ * 用于服务器端执行的执行管理器
+ *
+ * 当一个流被提交到FlowRunnerManager时，这个流的状态是{@link Status#PREPARING}；
+ * 当一个流即将被FlowRunner执行的时候，这个流的状态将变为{@link Status#RUNNING}
+ *
+ * 本类中使用两种数据结构存储流列表。
+ *
+ * runningFlows：只是用于记录在FlowRunnerManager中被提交执行的流，与用于执行一系列流的执行器executor服务没有任何关系。
+ * 用于取消或者是kill掉流。这些流会在实现{@link EventListener#handleEvent(Event)}的方法中，当处于{@link Event.Type#FLOW_FINISHED}状态的时候，将从这个列表中移除。
  *
  *
  */
@@ -645,6 +660,11 @@ public class FlowRunnerManager implements EventListener,
     return runner.getExecutableFlow();
   }
 
+    /**
+     * 实现EventListener接口的handleEvent方法，对任务流结束事件进行处理
+     * @param event
+     * @see EventListener#handleEvent(Event)
+     */
   @Override
   public void handleEvent(Event event) {
     if (event.getType() == Event.Type.FLOW_FINISHED) {

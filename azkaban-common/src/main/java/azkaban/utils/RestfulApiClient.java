@@ -40,7 +40,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 
-/** class handles the communication between the application and
+/**
+ * 抽象类，用于处理Java应用程序和基于restful的server之间的通信，
+ * class handles the communication between the application and
  *  a Restful API based web server.
  *  @param T : type of the returning response object.
  *  Note: the idea of this abstract class is to provide a wrapper for the logic around HTTP layer communication so

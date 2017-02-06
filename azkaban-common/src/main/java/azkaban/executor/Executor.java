@@ -21,8 +21,9 @@ import azkaban.utils.Utils;
 
 /**
  * Class to represent an AzkabanExecutorServer details for ExecutorManager
- *
+ * 执行服务器，封装了执行节点信息
  * @author gaggarwa
+ * @see ExecutorInfo
  */
 public class Executor implements Comparable<Executor> {
   private final int id;

@@ -31,6 +31,13 @@ import azkaban.utils.FileIOUtils.LogData;
 import azkaban.utils.JSONUtils;
 import azkaban.server.AbstractServiceServlet;
 
+/**
+ * <pre>
+ * 执行服务器，继承自azkaban.server.AbstractServiceServlet,
+ * 涉及到任务流的执行、查询等请求的处理
+ * </pre>
+ * @see javax.servlet.http.HttpServlet 基类HttpServlet
+ */
 public class ExecutorManagerServlet extends AbstractServiceServlet {
   private final ExecutorManagerAdapter executorManager;
 
@@ -53,7 +60,7 @@ public class ExecutorManagerServlet extends AbstractServiceServlet {
         respMap.put("error", "Parameter action not set");
       } else {
         String action = getParam(req, ExecutorManagerAdapter.INFO_ACTION);
-        if (action.equals(ExecutorManagerAdapter.ACTION_UPDATE)) {
+        if (action.equals(ExecutorManagerAdapter.ACTION_UPDATE)) {//获取已经更新的流信息
           handleAjaxUpdateRequest(req, respMap);
         } else {
           int execid =
@@ -64,23 +71,23 @@ public class ExecutorManagerServlet extends AbstractServiceServlet {
 
           logger.info("User " + user + " has called action " + action + " on "
               + execid);
-          if (action.equals(ExecutorManagerAdapter.ACTION_GET_FLOW_LOG)) {
+          if (action.equals(ExecutorManagerAdapter.ACTION_GET_FLOW_LOG)) {//获取流日志
             handleFetchFlowLogEvent(execid, req, resp, respMap);
-          } else if (action.equals(ExecutorManagerAdapter.ACTION_GET_JOB_LOG)) {
+          } else if (action.equals(ExecutorManagerAdapter.ACTION_GET_JOB_LOG)) {//获取任务日志
             handleFetchJobLogEvent(execid, req, resp, respMap);
-          } else if (action.equals(ExecutorManagerAdapter.ACTION_SUBMIT_FLOW)) {
+          } else if (action.equals(ExecutorManagerAdapter.ACTION_SUBMIT_FLOW)) {//提交流
             handleAjaxSubmitFlow(req, respMap, execid);
-          } else if (action.equals(ExecutorManagerAdapter.ACTION_CANCEL_FLOW)) {
+          } else if (action.equals(ExecutorManagerAdapter.ACTION_CANCEL_FLOW)) {//取消任务流的执行
             logger.info("Cancel called.");
             handleAjaxCancelFlow(respMap, execid, user);
-          } else if (action.equals(ExecutorManagerAdapter.ACTION_PAUSE_FLOW)) {
+          } else if (action.equals(ExecutorManagerAdapter.ACTION_PAUSE_FLOW)) {//暂停任务流的执行
             logger.info("Paused called.");
             handleAjaxPauseFlow(respMap, execid, user);
-          } else if (action.equals(ExecutorManagerAdapter.ACTION_RESUME_FLOW)) {
+          } else if (action.equals(ExecutorManagerAdapter.ACTION_RESUME_FLOW)) {//继续执行任务流
             logger.info("Resume called.");
             handleAjaxResumeFlow(respMap, execid, user);
           } else if (action
-              .equals(ExecutorManagerAdapter.ACTION_MODIFY_EXECUTION)) {
+              .equals(ExecutorManagerAdapter.ACTION_MODIFY_EXECUTION)) {//修改任务流的执行，目前只是重试执行失败的任务，ExecutorManagerAdapter.COMMAND_MODIFY_RETRY_FAILURES
             logger.info("Modify Execution Action");
             handleModifyExecution(respMap, execid, user, req);
           } else {
@@ -97,6 +104,13 @@ public class ExecutorManagerServlet extends AbstractServiceServlet {
     resp.flushBuffer();
   }
 
+    /**
+     * 修改任务流的执行，目前具备尝试重新执行失败的任务的功能
+     * @param respMap
+     * @param execid
+     * @param user
+     * @param req
+     */
   private void handleModifyExecution(HashMap<String, Object> respMap,
       int execid, String user, HttpServletRequest req) {
     if (!hasParam(req, ExecutorManagerAdapter.INFO_MODIFY_COMMAND)) {
@@ -149,6 +163,12 @@ public class ExecutorManagerServlet extends AbstractServiceServlet {
     }
   }
 
+    /**
+     * Ajax方式提交任务流（get方式，将流的数据存放在url中）
+     * @param req
+     * @param respMap
+     * @param execid
+     */
   private void handleAjaxSubmitFlow(HttpServletRequest req,
       HashMap<String, Object> respMap, int execid) {
     try {

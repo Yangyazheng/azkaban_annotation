@@ -28,6 +28,9 @@ import azkaban.utils.FileIOUtils.JobMetaData;
 import azkaban.utils.FileIOUtils.LogData;
 import azkaban.utils.Pair;
 
+/**
+ * 执行节点管理器接口
+ */
 public interface ExecutorManagerAdapter {
 
   public static final String LOCAL_MODE = "local";
@@ -248,6 +251,7 @@ public interface ExecutorManagerAdapter {
    public void setupExecutors() throws ExecutorManagerException;
 
    /**
+    * 启用在执行队列中的流
     * Enable flow dispatching in QueueProcessor
     *
     * @throws ExecutorManagerException
@@ -255,6 +259,7 @@ public interface ExecutorManagerAdapter {
    public void enableQueueProcessorThread() throws ExecutorManagerException;
 
    /**
+    * 禁用在执行队列中的流
     * Disable flow dispatching in QueueProcessor
     *
     * @throws ExecutorManagerException

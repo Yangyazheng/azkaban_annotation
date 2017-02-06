@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import azkaban.utils.Pair;
 
 /**
+ * 封装了服务器中还没有被分发出去的任务流，包含一个阻塞队列和一个并行hashmap
  * <pre>
  * Composite data structure to represent non-dispatched flows in webserver.
  * This data structure wraps a blocking queue and a concurrent hashmap.
