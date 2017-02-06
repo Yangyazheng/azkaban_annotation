@@ -139,6 +139,12 @@ public class SlaOption {
     return "Sla of " + getType() + getInfo() + getActions();
   }
 
+    /**
+     * 拼接执行任务流执行出错的邮件内容
+     * @param slaOption
+     * @param flow
+     * @return
+     */
   public static String createSlaMessage(SlaOption slaOption, ExecutableFlow flow) {
     String type = slaOption.getType();
     int execId = flow.getExecutionId();

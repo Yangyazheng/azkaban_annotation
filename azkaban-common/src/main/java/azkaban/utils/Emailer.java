@@ -107,6 +107,10 @@ public class Emailer extends AbstractMailer implements Alerter {
     }
   }
 
+    /**
+     * 发送首次执行错误的邮件通知
+     * @param flow
+     */
   public void sendFirstErrorMessage(ExecutableFlow flow) {
     EmailMessage message = new EmailMessage(mailHost, mailUser, mailPassword);
     message.setFromAddress(mailSender);
@@ -134,6 +138,11 @@ public class Emailer extends AbstractMailer implements Alerter {
     }
   }
 
+    /**
+     * 发送执行错误的邮件通知
+     * @param flow
+     * @param extraReasons
+     */
   public void sendErrorEmail(ExecutableFlow flow, String... extraReasons) {
     EmailMessage message = new EmailMessage(mailHost, mailUser, mailPassword);
     message.setFromAddress(mailSender);
@@ -160,6 +169,10 @@ public class Emailer extends AbstractMailer implements Alerter {
     }
   }
 
+    /**
+     * 发送执行成功的邮件通知
+     * @param flow
+     */
   public void sendSuccessEmail(ExecutableFlow flow) {
     EmailMessage message = new EmailMessage(mailHost, mailUser, mailPassword);
     message.setFromAddress(mailSender);
@@ -186,6 +199,11 @@ public class Emailer extends AbstractMailer implements Alerter {
     }
   }
 
+    /**
+     * 查找出流当中失败的任务
+     * @param flow
+     * @return 执行失败的任务的id
+     */
   public static List<String> findFailedJobs(ExecutableFlow flow) {
     ArrayList<String> failedJobs = new ArrayList<String>();
     for (ExecutableNode node : flow.getExecutableNodes()) {

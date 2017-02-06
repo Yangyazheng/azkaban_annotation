@@ -30,7 +30,7 @@ import azkaban.utils.Emailer;
 import azkaban.utils.Utils;
 
 /**
- * 默认邮件处理（发送多种不同信息的邮件）
+ * 默认邮件处理（发送多种不同信息的邮件模板）
  */
 public class DefaultMailCreator implements MailCreator {
   public static final String DEFAULT_MAIL_CREATOR = "default";
