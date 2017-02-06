@@ -25,6 +25,9 @@ import azkaban.utils.FileIOUtils.LogData;
 import azkaban.utils.Pair;
 import azkaban.utils.Props;
 
+/**
+ * 执行节点加载器接口
+ */
 public interface ExecutorLoader {
   public void uploadExecutableFlow(ExecutableFlow flow)
       throws ExecutorManagerException;
@@ -186,6 +189,7 @@ public interface ExecutorLoader {
   public void unassignExecutor(int executionId) throws ExecutorManagerException;
 
   /**
+   * 为任务流的一次执行指定执行节点
    * <pre>
    * Set an executor Id to an execution
    * Note:-
@@ -216,6 +220,7 @@ public interface ExecutorLoader {
     throws ExecutorManagerException;
 
   /**
+   * 获取那些还没有被分发出去的任务队列
    * <pre>
    * Fetch queued flows which have not yet dispatched
    * Note:

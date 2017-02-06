@@ -51,6 +51,11 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 import azkaban.utils.PropsUtils;
 
+/**
+ * 执行节点加载器接口实现类（azkaban默认实现），
+ * 使用Jdbc从数据库加载执行节点信息，
+ * 以及处理和执行节点相关的行为，如：上传执行流、更新流执行信息、多条件查询流执行历史等
+ */
 public class JdbcExecutorLoader extends AbstractJdbcLoader implements
     ExecutorLoader {
   private static final Logger logger = Logger
@@ -120,6 +125,11 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 更新可执行流
+     * @param flow
+     * @throws ExecutorManagerException
+     */
   @Override
   public void updateExecutableFlow(ExecutableFlow flow)
       throws ExecutorManagerException {
@@ -132,6 +142,13 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 更新流执行过程中的信息（包括状态的变迁）
+     * @param connection
+     * @param flow
+     * @param encType
+     * @throws ExecutorManagerException
+     */
   private void updateExecutableFlow(Connection connection, ExecutableFlow flow,
       EncodingType encType) throws ExecutorManagerException {
     final String UPDATE_EXECUTABLE_FLOW_DATA =
@@ -163,6 +180,12 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 根据执行id获取流在本次执行的情况
+     * @param id
+     * @return
+     * @throws ExecutorManagerException
+     */
   @Override
   public ExecutableFlow fetchExecutableFlow(int id)
       throws ExecutorManagerException {
@@ -184,7 +207,7 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
   }
 
   /**
-   *
+   * 获取那些还没有被分发出去的任务组成的队列
    * {@inheritDoc}
    * @see azkaban.executor.ExecutorLoader#fetchQueuedFlows()
    */
@@ -668,6 +691,14 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 上传日志文件
+     * @param execId
+     * @param name
+     * @param attempt
+     * @param files
+     * @throws ExecutorManagerException
+     */
   @Override
   public void uploadLogFile(int execId, String name, int attempt, File... files)
       throws ExecutorManagerException {
@@ -756,6 +787,12 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
             .getMillis());
   }
 
+    /**
+     * 上传附件
+     * @param node
+     * @param file
+     * @throws ExecutorManagerException
+     */
   @Override
   public void uploadAttachmentFile(ExecutableNode node, File file)
       throws ExecutorManagerException {

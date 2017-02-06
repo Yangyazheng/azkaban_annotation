@@ -28,6 +28,9 @@ import org.apache.commons.dbutils.ResultSetHandler;
 
 import azkaban.utils.Props;
 
+/**
+ * 抽象类，提供数据库获取连接等功能
+ */
 public abstract class AbstractJdbcLoader {
   /**
    * Used for when we store text data. Plain uses UTF8 encoding.
@@ -119,7 +122,7 @@ public abstract class AbstractJdbcLoader {
   }
 
   /**
-   * 获取结果集中所有记录的第一个整数
+   * 获取结果集中所有记录的第一个整数，组成整数列表
    */
   public static class IntListHandler implements
       ResultSetHandler<ArrayList<Integer>> {

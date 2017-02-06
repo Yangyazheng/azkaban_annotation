@@ -59,6 +59,7 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 
 /**
+ * 执行节点管理器
  * Executor manager used to manage the client side job.
  *
  */
