@@ -21,6 +21,9 @@ import java.util.Map;
 
 import azkaban.utils.TypedMapWrapper;
 
+/**
+ * 封装尝试重新执行的信息
+ */
 public class ExecutionAttempt {
   public static final String ATTEMPT_PARAM = "attempt";
   public static final String STATUS_PARAM = "status";

@@ -27,8 +27,9 @@ import azkaban.executor.mail.DefaultMailCreator;
 import azkaban.utils.TypedMapWrapper;
 
 /**
+ * 已经提交、已经调度的任务流的执行参数
  * Execution options for submitted flows and scheduled flows
- * 
+ *
  */
 public class ExecutionOptions {
   public static final String CONCURRENT_OPTION_SKIP = "skip";

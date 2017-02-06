@@ -16,10 +16,14 @@
 
 package azkaban.executor;
 
+/**
+ * 执行引用
+ */
 public class ExecutionReference {
   private final int execId;
   private Executor executor;
   private long updateTime;
+  //下次检查是否满足执行条件的时间
   private long nextCheckTime = -1;
   private int numErrors = 0;
 

@@ -23,6 +23,9 @@ import java.util.Map;
 
 import azkaban.utils.Pair;
 
+/**
+ * 封装job信息
+ */
 public class ExecutableJobInfo {
   private final int execId;
   private final int projectId;
@@ -106,6 +109,11 @@ public class ExecutableJobInfo {
     return jobPath;
   }
 
+    /**
+     * 根据flowId初始化jobPath成员变量，
+     * flowId结构：多层次任务流嵌套每个任务流所在的目录名称，真正的流id，用冒号隔开，
+     * 每个任务节点（普通任务和任务流）之间用逗号隔开
+     */
   private void parseFlowId() {
     jobPath = new ArrayList<Pair<String, String>>();
     String[] flowPairs = flowId.split(",");
@@ -123,6 +131,10 @@ public class ExecutableJobInfo {
     }
   }
 
+    /**
+     * 获取任务所在的文件路径（每个project以及下面的任务流、任务有相应的临时目录和文件对应）
+     * @return
+     */
   public String getJobIdPath() {
     // Skip the first one because it's always just the root.
     String path = "";
