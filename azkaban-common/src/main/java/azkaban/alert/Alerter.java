@@ -46,7 +46,7 @@ public interface Alerter {
   void alertOnFirstError(ExecutableFlow exflow) throws Exception;
 
     /**
-     *
+     * 邮件通知
      * @param slaOption
      * @param slaMessage
      * @throws Exception
