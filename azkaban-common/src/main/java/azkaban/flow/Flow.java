@@ -26,15 +26,30 @@ import java.util.Set;
 
 import azkaban.executor.mail.DefaultMailCreator;
 
+/**
+ * 任务流
+ */
 public class Flow {
   private final String id;
   private int projectId;
+    /**
+     * 开始任务节点
+     */
   private ArrayList<Node> startNodes = null;
+    /**
+     * 收尾任务节点
+     */
   private ArrayList<Node> endNodes = null;
   private int numLevels = -1;
 
+    /**
+     * 流中的所有任务、任务流节点
+     */
   private HashMap<String, Node> nodes = new HashMap<String, Node>();
 
+    /**
+     * 任务流里面的节点之间的有向边
+     */
   private HashMap<String, Edge> edges = new HashMap<String, Edge>();
   private HashMap<String, Set<Edge>> outEdges =
       new HashMap<String, Set<Edge>>();
@@ -82,11 +97,16 @@ public class Flow {
       for (Node node : startNodes) {
         node.setLevel(0);
         numLevels = 0;
+          //递归设置每个节点的递归层次
         recursiveSetLevels(node);
       }
     }
   }
 
+    /**
+     * 递归设置每个任务、内嵌任务流节点的层次level
+     * @param node
+     */
   private void recursiveSetLevels(Node node) {
     Set<Edge> edges = outEdges.get(node.getId());
     if (edges != null) {

@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 任务流里面表示依赖关系的边
+ */
 public class Edge {
   private final String sourceId;
   private final String targetId;

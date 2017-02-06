@@ -16,6 +16,9 @@
 
 package azkaban.flow;
 
+/**
+ * job公共属性
+ */
 public class CommonJobProperties {
   /*
    * The following are Common properties that can be set in a job file
@@ -77,12 +80,12 @@ public class CommonJobProperties {
   public static final String JOB_ATTEMPT = "azkaban.job.attempt";
 
   /**
-   * The attempt number of the executing job.
+   * The metadata file of the executing job.
    */
   public static final String JOB_METADATA_FILE = "azkaban.job.metadata.file";
 
   /**
-   * The attempt number of the executing job.
+   * The attachment file of the executing job.
    */
   public static final String JOB_ATTACHMENT_FILE =
       "azkaban.job.attachment.file";

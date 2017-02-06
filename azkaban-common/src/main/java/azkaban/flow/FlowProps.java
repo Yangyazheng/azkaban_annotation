@@ -21,6 +21,9 @@ import java.util.Map;
 
 import azkaban.utils.Props;
 
+/**
+ * 任务流属性
+ */
 public class FlowProps {
   private String parentSource;
   private String propSource;
