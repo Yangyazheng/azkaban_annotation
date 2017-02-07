@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import azkaban.utils.Props;
 
 /**
+ * 验证job回调相关的属性
  * Responsible for validating the job callback related properties at project
  * upload time
  * 
@@ -29,6 +30,7 @@ public class JobCallbackValidator {
       .getLogger(JobCallbackValidator.class);
 
   /**
+   * 验证job回调相关的属性的合法性
    * Make sure all the job callback related properties are valid
    * 
    * @param jobProps

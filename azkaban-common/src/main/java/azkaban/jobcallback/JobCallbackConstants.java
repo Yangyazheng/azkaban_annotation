@@ -1,5 +1,8 @@
 package azkaban.jobcallback;
 
+/**
+ * job回调常量
+ */
 public interface JobCallbackConstants {
   public static final String STATUS_TOKEN = "status";
   public static final String SEQUENCE_TOKEN = "sequence";
