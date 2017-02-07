@@ -19,6 +19,9 @@ package azkaban.jmx;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 
+/**
+ * jetty server 管理接口实现类
+ */
 public class JmxJettyServer implements JmxJettyServerMBean {
   private Server server;
   private Connector connector;

@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 import javax.management.DescriptorKey;
 
 /**
+ * 用于展示方法说明的注解
  * DisplayName - This annotation allows to supply a display name for a method in
  * the MBean interface.
  */

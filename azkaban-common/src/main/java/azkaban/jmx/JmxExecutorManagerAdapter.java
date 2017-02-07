@@ -22,6 +22,9 @@ import java.util.List;
 
 import azkaban.executor.ExecutorManagerAdapter;
 
+/**
+ *
+ */
 public class JmxExecutorManagerAdapter implements
     JmxExecutorManagerAdapterMBean {
   private ExecutorManagerAdapter manager;

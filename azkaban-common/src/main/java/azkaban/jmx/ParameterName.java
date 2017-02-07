@@ -16,6 +16,7 @@
 package azkaban.jmx;
 
 /**
+ * 用于展示参数说明的注解
  * ParameterName - This annotation allows to supply
  * a parameter name for a method in the MBean interface.
  */

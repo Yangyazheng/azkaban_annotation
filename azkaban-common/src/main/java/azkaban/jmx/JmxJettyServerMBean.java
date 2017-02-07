@@ -16,16 +16,35 @@
 
 package azkaban.jmx;
 
+/**
+ * jetty server 管理接口
+ */
 public interface JmxJettyServerMBean {
+    /**
+     * jetty server LifeCycle: is server running
+     * @return
+     */
   @DisplayName("OPERATION: isRunning")
   public boolean isRunning();
 
+    /**
+     * jetty server LifeCycle: is server failed
+     * @return
+     */
   @DisplayName("OPERATION: isFailed")
   public boolean isFailed();
 
+    /**
+     * jetty server LifeCycle: is server stopped
+     * @return
+     */
   @DisplayName("OPERATION: isStopped")
   public boolean isStopped();
 
+    /**
+     * get the num of running thread,线程池中线程的数量
+     * @return
+     */
   @DisplayName("OPERATION: getNumThreads")
   public int getNumThreads();
 
@@ -44,12 +63,24 @@ public interface JmxJettyServerMBean {
   @DisplayName("OPERATION: getConnections")
   public int getConnections();
 
+    /**
+     * 获取打开的连接数量
+     * @return
+     */
   @DisplayName("OPERATION: getConnectionsOpen")
   public int getConnectionsOpen();
 
+    /**
+     * 获取最大连接数
+     * @return
+     */
   @DisplayName("OPERATION: getConnectionsOpenMax")
   public int getConnectionsOpenMax();
 
+    /**
+     * 获取最小连接数
+     * @return
+     */
   @DisplayName("OPERATION: getConnectionsOpenMin")
   public int getConnectionsOpenMin();
 

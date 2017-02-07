@@ -19,6 +19,9 @@ package azkaban.jmx;
 import azkaban.trigger.TriggerManagerAdapter;
 import azkaban.trigger.TriggerManagerAdapter.TriggerJMX;
 
+/**
+ * JMX触发器管理类
+ */
 public class JmxTriggerManager implements JmxTriggerManagerMBean {
   private TriggerJMX jmxStats;
 
