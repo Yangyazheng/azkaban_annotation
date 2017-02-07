@@ -16,6 +16,9 @@
 
 package azkaban.project;
 
+/**
+ * 封装project的事件日志
+ */
 public class ProjectLogEvent {
   /**
    * Log event type messages. Do not change the numeric representation of each enum.

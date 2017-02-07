@@ -18,6 +18,9 @@ package azkaban.project;
 
 import java.io.File;
 
+/**
+ * 处理project的文件
+ */
 public class ProjectFileHandler {
   private final int projectId;
   private final int version;

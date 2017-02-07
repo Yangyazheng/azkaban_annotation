@@ -28,6 +28,9 @@ import azkaban.user.User;
 import azkaban.utils.Props;
 import azkaban.utils.Triple;
 
+/**
+ * project加载器接口
+ */
 public interface ProjectLoader {
 
   /**

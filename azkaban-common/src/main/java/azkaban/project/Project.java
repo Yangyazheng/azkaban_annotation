@@ -45,7 +45,7 @@ public class Project {
       new LinkedHashMap<String, Permission>();
   private LinkedHashMap<String, Permission> groupPermissionMap =
       new LinkedHashMap<String, Permission>();
-  private Map<String, Flow> flows = null;
+  private Map<String, Flow> flows = null;//project中的任务流
   private HashSet<String> proxyUsers = new HashSet<String>();
   private Map<String, Object> metadata = new HashMap<String, Object>();
 

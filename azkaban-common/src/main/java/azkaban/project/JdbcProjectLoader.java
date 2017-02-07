@@ -52,6 +52,9 @@ import azkaban.utils.Props;
 import azkaban.utils.PropsUtils;
 import azkaban.utils.Triple;
 
+/**
+ * project加载器的Jdbc方式实现,继承AbstractJdbcLoader（使用父类已经实现的数据库操作）
+ */
 public class JdbcProjectLoader extends AbstractJdbcLoader implements
     ProjectLoader {
   private static final Logger logger = Logger
@@ -718,6 +721,15 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 将project加载过程中的事件保存到数据库中，其他地方通过从数据库中读取数据查看发生的事件
+     * {@inheritDoc}
+     * @param project
+     * @param type
+     * @param user
+     * @param message return true if the posting was success.
+     * @return
+     */
   @Override
   public boolean postEvent(Project project, EventType type, String user,
       String message) {
@@ -761,6 +773,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     return events;
   }
 
+    /**
+     * 更新project的描述信息
+     * @param project
+     * @param description
+     * @param user
+     * @throws ProjectManagerException
+     */
   @Override
   public void updateDescription(Project project, String description, String user)
       throws ProjectManagerException {
@@ -782,6 +801,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 获取project的最新版本
+     * @param project
+     * @return
+     * @throws ProjectManagerException
+     */
   @Override
   public int getLatestProjectVersion(Project project)
       throws ProjectManagerException {
@@ -798,6 +823,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 向project上传任务流
+     * @param project
+     * @param version
+     * @param flows
+     * @throws ProjectManagerException
+     */
   @Override
   public void uploadFlows(Project project, int version, Collection<Flow> flows)
       throws ProjectManagerException {
@@ -820,6 +852,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 向project上传任务流
+     * @param project
+     * @param version
+     * @param flow
+     * @throws ProjectManagerException
+     */
   @Override
   public void uploadFlow(Project project, int version, Flow flow)
       throws ProjectManagerException {
@@ -838,6 +877,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 更新project中特定版本里面的任务流
+     * @param project
+     * @param version
+     * @param flow
+     * @throws ProjectManagerException
+     */
   @Override
   public void updateFlow(Project project, int version, Flow flow)
       throws ProjectManagerException {
@@ -908,6 +954,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 获取任务流
+     * @param project
+     * @param flowId
+     * @return
+     * @throws ProjectManagerException
+     */
   @Override
   public Flow fetchFlow(Project project, String flowId)
       throws ProjectManagerException {
@@ -928,6 +981,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 获取project下的所有任务流
+     * @param project
+     * @return
+     * @throws ProjectManagerException
+     */
   @Override
   public List<Flow> fetchAllProjectFlows(Project project)
       throws ProjectManagerException {
@@ -947,6 +1006,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     return flows;
   }
 
+    /**
+     * 上传project的属性
+     * @param project
+     * @param properties
+     * @throws ProjectManagerException
+     */
   @Override
   public void uploadProjectProperties(Project project, List<Props> properties)
       throws ProjectManagerException {
@@ -968,6 +1033,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 上传project的属性
+     * @param project
+     * @param props
+     * @throws ProjectManagerException
+     */
   @Override
   public void uploadProjectProperty(Project project, Props props)
       throws ProjectManagerException {
@@ -986,6 +1057,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 更新project的属性
+     * @param project
+     * @param props
+     * @throws ProjectManagerException
+     */
   @Override
   public void updateProjectProperty(Project project, Props props)
       throws ProjectManagerException {
@@ -1096,6 +1173,12 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 清空project的旧版本数据
+     * @param projectId
+     * @param version
+     * @throws ProjectManagerException
+     */
   @Override
   public void cleanOlderProjectVersion(int projectId, int version)
       throws ProjectManagerException {
@@ -1111,6 +1194,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 清空旧版本project中的任务流
+     * @param connection
+     * @param projectId
+     * @param version
+     * @throws ProjectManagerException
+     */
   private void cleanOlderProjectVersionFlows(Connection connection,
       int projectId, int version) throws ProjectManagerException {
     final String DELETE_FLOW =
@@ -1125,6 +1215,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 清空旧版本project的属性设置
+     * @param connection
+     * @param projectId
+     * @param version
+     * @throws ProjectManagerException
+     */
   private void cleanOlderProjectVersionProperties(Connection connection,
       int projectId, int version) throws ProjectManagerException {
     final String DELETE_PROPERTIES =
@@ -1140,6 +1237,13 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements
     }
   }
 
+    /**
+     * 清空旧版本project对应的文件
+     * @param connection
+     * @param projectId
+     * @param version
+     * @throws ProjectManagerException
+     */
   private void cleanOlderProjectFiles(Connection connection, int projectId,
       int version) throws ProjectManagerException {
     final String DELETE_PROJECT_FILES =

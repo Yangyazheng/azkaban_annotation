@@ -46,6 +46,9 @@ import azkaban.user.User;
 import azkaban.utils.Props;
 import azkaban.utils.Utils;
 
+/**
+ * project管理器
+ */
 public class ProjectManager {
   private static final Logger logger = Logger.getLogger(ProjectManager.class);
 
