@@ -22,6 +22,7 @@ import azkaban.jobExecutor.Job;
 import azkaban.utils.Props;
 
 /**
+ * 实际运行中的任务类型插件容器，主要存放的是系统中定义的任务类型，以及对应的执行器（带有run方法，运行实际的工作）
  * Container for job type plugins
  *
  * This contains the jobClass objects, the properties for loading plugins, and
@@ -128,6 +129,7 @@ public class JobTypePluginSet {
   }
 
   /**
+   * 新增插件，存放的是（job类型，任务执行者）这样的键值对
    * Adds plugin jobtype class
    */
   public void addPluginClass(String jobTypeName,

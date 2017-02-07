@@ -38,6 +38,9 @@ import azkaban.utils.Props;
 import azkaban.utils.PropsUtils;
 import azkaban.utils.Utils;
 
+/**
+ * 任务类型管理器
+ */
 public class JobTypeManager {
 	private final String jobTypePluginDir; // the dir for jobtype plugins
 	private final ClassLoader parentLoader;
@@ -64,6 +67,10 @@ public class JobTypeManager {
 		loadPlugins();
 	}
 
+    /**
+     * 加载插件
+     * @throws JobTypeManagerException
+     */
 	public void loadPlugins() throws JobTypeManagerException {
 		JobTypePluginSet plugins = new JobTypePluginSet();
 
@@ -88,6 +95,11 @@ public class JobTypeManager {
 		}
 	}
 
+    /**
+     * 加载默认插件
+     * @param plugins
+     * @throws JobTypeManagerException
+     */
 	private void loadDefaultTypes(JobTypePluginSet plugins) throws JobTypeManagerException {
 		logger.info("Loading plugin default job types");
 		plugins.addPluginClass("command", ProcessJob.class);
@@ -98,6 +110,11 @@ public class JobTypeManager {
 		plugins.addPluginClass("script", ScriptJob.class);
 	}
 
+    /**
+     * 加载插件目录下所有的插件
+     * @param plugins
+     * @throws JobTypeManagerException
+     */
 	// load Job Types from jobtype plugin dir
 	private void loadPluginJobTypes(JobTypePluginSet plugins) throws JobTypeManagerException {
 		File jobPluginsDir = new File(jobTypePluginDir);
@@ -158,6 +175,12 @@ public class JobTypeManager {
 		}
 	}
 
+    /**
+     * 加载单独的插件，目录名称就是jobType
+     * @param pluginDir
+     * @param plugins
+     * @throws JobTypeManagerException
+     */
 	@SuppressWarnings("unchecked")
 	private void loadJobTypes(File pluginDir, JobTypePluginSet plugins) throws JobTypeManagerException {
 		// Directory is the jobtypeName
@@ -290,6 +313,14 @@ public class JobTypeManager {
 		return jobTypeLoader;
 	}
 
+    /**
+     * 构建单个任务执行器，执行一个任务
+     * @param jobId
+     * @param jobProps
+     * @param logger
+     * @return
+     * @throws JobTypeManagerException
+     */
 	public Job buildJobExecutor(String jobId, Props jobProps, Logger logger) throws JobTypeManagerException {
 		// This is final because during build phase, you should never need to
 		// swap
