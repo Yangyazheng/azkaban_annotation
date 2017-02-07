@@ -28,6 +28,7 @@ import azkaban.jobExecutor.utils.process.AzkabanProcess;
 import azkaban.jobExecutor.utils.process.AzkabanProcessBuilder;
 
 /**
+ * 单行命令行任务，将所有参数设置都放在一行中设置完
  * A job that passes all the job properties as command line arguments in "long"
  * format, e.g. --key1 value1 --key2 value2 ...
  */
@@ -42,6 +43,9 @@ public abstract class LongArgJob extends AbstractProcessJob {
     this(jobid, command, sysProps, jobProps, log, new HashSet<String>(0));
   }
 
+    /**
+     * @param suppressedKeys 剔除的属性
+     */
   public LongArgJob(String jobid, String[] command, Props sysProps,
       Props jobProp, Logger log, Set<String> suppressedKeys) {
     super(jobid, sysProps, jobProp, log);

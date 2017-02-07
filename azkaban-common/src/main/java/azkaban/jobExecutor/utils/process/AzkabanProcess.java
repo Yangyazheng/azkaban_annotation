@@ -34,6 +34,7 @@ import azkaban.utils.LogGobbler;
 import com.google.common.base.Joiner;
 
 /**
+ * java.lang.Process的升级版
  * An improved version of java.lang.Process.
  * 
  * Output is read by separate threads to avoid deadlock and logged to log4j

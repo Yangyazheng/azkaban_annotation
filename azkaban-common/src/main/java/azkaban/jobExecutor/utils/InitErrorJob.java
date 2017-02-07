@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import azkaban.jobExecutor.AbstractJob;
 
 /**
+ * 用于在初始化阶段抛出异常的job
  * this job is used to throw out exception caught in initialization stage
  *
  * @author lguo

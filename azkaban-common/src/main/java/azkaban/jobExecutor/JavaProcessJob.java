@@ -28,6 +28,9 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 import azkaban.utils.Utils;
 
+/**
+ * 运行Java程序的命令任务，主要用于获取Java环境变量，classpath，xms、Xmx等设置
+ */
 public class JavaProcessJob extends ProcessJob {
   public static final String CLASSPATH = "classpath";
   public static final String GLOBAL_CLASSPATH = "global.classpaths";

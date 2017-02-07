@@ -34,6 +34,7 @@ import azkaban.utils.PropsUtils;
 
 /**
  * A revised process-based job
+ * 基于过程批处理的任务
  */
 public abstract class AbstractProcessJob extends AbstractJob {
   private final Logger log;

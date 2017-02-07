@@ -22,6 +22,9 @@ import com.google.common.collect.ImmutableSet;
 
 import azkaban.utils.Props;
 
+/**
+ * Python任务
+ */
 public class PythonJob extends LongArgJob {
 
   private static final String PYTHON_BINARY_KEY = "python";

@@ -21,7 +21,7 @@ public class ProcessFailureException extends RuntimeException {
   private static final long serialVersionUID = 1;
 
   private final int exitCode;
-  private final String logSnippet;
+  private final String logSnippet;//日志片段
 
   public ProcessFailureException(int exitCode, String logSnippet) {
     this.exitCode = exitCode;

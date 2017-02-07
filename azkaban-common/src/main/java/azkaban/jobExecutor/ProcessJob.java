@@ -33,6 +33,7 @@ import azkaban.utils.SystemMemoryInfo;
 
 /**
  * A job that runs a simple unix command
+ * 运行简单Unix命令的任务
  */
 public class ProcessJob extends AbstractProcessJob {
 
@@ -65,6 +66,11 @@ public class ProcessJob extends AbstractProcessJob {
     jobProps.put(CommonJobProperties.JOB_ID, jobId);
   }
 
+    /**
+     * 运行任务，在运行之前检测系统的资源是否满足设置的阈值，
+     * 创建临时工作文件，执行结束以后清空临时文件
+     * @throws Exception
+     */
   @Override
   public void run() throws Exception {
     try {
@@ -214,6 +220,7 @@ public class ProcessJob extends AbstractProcessJob {
 
   /**
    * <pre>
+   * 获取运行任务的用户
    * Determines what user id should the process job run as, in the following order of precedence:
    * 1. USER_TO_PROXY
    * 2. SUBMIT_USER
@@ -291,6 +298,7 @@ public class ProcessJob extends AbstractProcessJob {
   }
 
   /**
+   * 将命令切割为Unix风格的命令行结构
    * Splits the command into a unix like command line structure. Quotes and
    * single quotes are treated as nested strings.
    *

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import azkaban.utils.Props;
 
 /**
+ * 空操作任务
  * A no-op job.
  */
 public class NoopJob implements Job {

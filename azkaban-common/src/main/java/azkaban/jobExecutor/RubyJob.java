@@ -22,6 +22,9 @@ import azkaban.utils.Props;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * ruby任务
+ */
 public class RubyJob extends LongArgJob {
 
   private static final String RUBY_BINARY_KEY = "ruby";

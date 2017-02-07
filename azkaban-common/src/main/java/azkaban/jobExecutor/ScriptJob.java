@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableSet;
 import azkaban.utils.Props;
 
 /**
+ * 脚本任务
  * A script job issues a command of the form [EXECUTABLE] [SCRIPT] --key1 val1
  * ... --key2 val2 executable -- the interpretor command to execute script --
  * the script to pass in (requried)

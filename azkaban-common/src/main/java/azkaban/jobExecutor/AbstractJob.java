@@ -20,6 +20,9 @@ import org.apache.log4j.Logger;
 
 import azkaban.utils.Props;
 
+/**
+ * 实现Job接口，是其他任务的基类
+ */
 public abstract class AbstractJob implements Job {
 
   public static final String JOB_TYPE = "type";
@@ -50,6 +53,10 @@ public abstract class AbstractJob implements Job {
     this._progress = progress;
   }
 
+    /**
+     * 默认无法取消Job的运行
+     * @throws Exception
+     */
   public void cancel() throws Exception {
     throw new RuntimeException("Job " + _id + " does not support cancellation!");
   }

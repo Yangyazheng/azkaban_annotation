@@ -19,6 +19,7 @@ package azkaban.jobExecutor;
 import azkaban.utils.Props;
 
 /**
+ * 定义了一个粗粒度的Job接口
  * This interface defines a Raw Job interface. Each job defines
  * <ul>
  * <li>Job Type : {HADOOP, UNIX, JAVA, SUCCESS_TEST, CONTROLLER}</li>
