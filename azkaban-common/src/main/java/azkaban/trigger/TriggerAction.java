@@ -18,20 +18,39 @@ package azkaban.trigger;
 
 import java.util.Map;
 
+/**
+ * 触发器动作接口
+ */
 public interface TriggerAction {
 
+    /**
+     * 获取动作id
+     * @return
+     */
   String getId();
 
+    /**
+     * 动作类型
+     * @return
+     */
   String getType();
 
   TriggerAction fromJson(Object obj) throws Exception;
 
   Object toJson();
 
+    /**
+     * 执行动作
+     * @throws Exception
+     */
   void doAction() throws Exception;
 
   void setContext(Map<String, Object> context);
 
+    /**
+     * 动作描述
+     * @return
+     */
   String getDescription();
 
 }

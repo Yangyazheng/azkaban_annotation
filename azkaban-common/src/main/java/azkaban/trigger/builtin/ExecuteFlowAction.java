@@ -37,6 +37,10 @@ import azkaban.trigger.Trigger;
 import azkaban.trigger.TriggerAction;
 import azkaban.trigger.TriggerManager;
 
+/**
+ * 执行任务流动作，实现{@link TriggerAction}接口；
+ * 任务流的一次执行
+ */
 public class ExecuteFlowAction implements TriggerAction {
 
   public static final String type = "ExecuteFlowAction";
@@ -203,6 +207,14 @@ public class ExecuteFlowAction implements TriggerAction {
     return jsonObj;
   }
 
+    /**
+     * <pre>
+     * {@inheritDoc}
+     * submit 任务流，交由执行节点管理器分配执行节点，并由执行节点执行。
+     * 如果有sla设置，将设置sla触发器，对设置的通知类型进行通知
+     * </pre>
+     * @throws Exception
+     */
   @Override
   public void doAction() throws Exception {
     if (projectManager == null || executorManager == null) {

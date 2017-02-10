@@ -26,6 +26,9 @@ import azkaban.executor.ExecutorManagerAdapter;
 import azkaban.executor.Status;
 import azkaban.trigger.TriggerAction;
 
+/**
+ * 终止任务流执行的动作，实现{@link TriggerAction}接口
+ */
 public class KillExecutionAction implements TriggerAction {
 
   public static final String type = "KillExecutionAction";
@@ -35,6 +38,7 @@ public class KillExecutionAction implements TriggerAction {
 
   private String actionId;
   private int execId;
+    /** 执行节点管理器*/
   private static ExecutorManagerAdapter executorManager;
 
   public KillExecutionAction(String actionId, int execId) {
@@ -88,6 +92,11 @@ public class KillExecutionAction implements TriggerAction {
     return jsonObj;
   }
 
+    /**
+     * {@inheritDoc}
+     * ,由执行节点管理器取消任务流的执行
+     * @throws Exception
+     */
   @Override
   public void doAction() throws Exception {
     ExecutableFlow exFlow = executorManager.getExecutableFlow(execId);

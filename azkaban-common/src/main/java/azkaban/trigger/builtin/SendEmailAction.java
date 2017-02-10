@@ -25,6 +25,9 @@ import azkaban.utils.AbstractMailer;
 import azkaban.utils.EmailMessage;
 import azkaban.utils.Props;
 
+/**
+ * 发送邮件动作，实现{@link TriggerAction}接口
+ */
 public class SendEmailAction implements TriggerAction {
 
   private String actionId;
@@ -88,6 +91,11 @@ public class SendEmailAction implements TriggerAction {
     return jsonObj;
   }
 
+    /**
+     * {@inheritDoc},
+     * {@link AbstractMailer}准备邮件内容，{@link EmailMessage}发送邮件
+     * @throws Exception
+     */
   @Override
   public void doAction() throws Exception {
     EmailMessage email =

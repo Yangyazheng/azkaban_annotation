@@ -48,6 +48,10 @@ public class ExecutionChecker implements ConditionChecker {
     executorManager = em;
   }
 
+    /**
+     * 检查任务节点是否达到想要的状态{@link ExecutionChecker#wantedStatus}
+     * @return
+     */
   @Override
   public Object eval() {
     ExecutableFlow exflow;

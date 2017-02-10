@@ -27,6 +27,9 @@ import azkaban.executor.ExecutorManagerAdapter;
 import azkaban.sla.SlaOption;
 import azkaban.trigger.TriggerAction;
 
+/**
+ * sla failure通知动作，实现{@link TriggerAction}接口
+ */
 public class SlaAlertAction implements TriggerAction {
 
   public static final String type = "AlertAction";
@@ -37,6 +40,7 @@ public class SlaAlertAction implements TriggerAction {
   private SlaOption slaOption;
   private int execId;
   private static Map<String, azkaban.alert.Alerter> alerters;
+    /** 执行节点管理器*/
   private static ExecutorManagerAdapter executorManager;
 
   public SlaAlertAction(String id, SlaOption slaOption, int execId) {
@@ -97,6 +101,11 @@ public class SlaAlertAction implements TriggerAction {
     return jsonObj;
   }
 
+    /**
+     * 根据sla alert type从执行节点管理器中获取任务流信息，生成sla消息通知。
+     * 当任务、任务流出错的时候进行sla通知。
+     * @throws Exception
+     */
   @Override
   public void doAction() throws Exception {
     logger.info("Alerting on sla failure.");

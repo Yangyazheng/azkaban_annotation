@@ -23,6 +23,9 @@ import azkaban.trigger.Trigger;
 import azkaban.trigger.TriggerAction;
 import azkaban.trigger.TriggerManager;
 
+/**
+ * 创建触发器动作，实现{@link TriggerAction}接口
+ */
 public class CreateTriggerAction implements TriggerAction {
 
   public static final String type = "CreateTriggerAction";
@@ -73,6 +76,10 @@ public class CreateTriggerAction implements TriggerAction {
     return jsonObj;
   }
 
+    /**
+     * 向{@link TriggerManager}的触发器队列中插入新创建的触发器
+     * @throws Exception
+     */
   @Override
   public void doAction() throws Exception {
     triggerManager.insertTrigger(trigger);
