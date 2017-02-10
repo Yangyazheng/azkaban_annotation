@@ -19,37 +19,91 @@ package azkaban.trigger;
 import java.util.List;
 import java.util.Map;
 
-public interface TriggerManagerAdapter {
+/**
+ * Trigger管理器适配器接口，用于触发器的管理
+ */
+public interface TriggerManagerAdapter {//对系统的触发器进行管理
 
+    /**
+     * 增加触发器
+     * @param t
+     * @param user
+     * @throws TriggerManagerException
+     */
   public void insertTrigger(Trigger t, String user)
       throws TriggerManagerException;
 
+    /**
+     * 移除触发器
+     * @param id
+     * @param user
+     * @throws TriggerManagerException
+     */
   public void removeTrigger(int id, String user) throws TriggerManagerException;
 
+    /**
+     * 更新触发器
+     * @param t
+     * @param user
+     * @throws TriggerManagerException
+     */
   public void updateTrigger(Trigger t, String user)
       throws TriggerManagerException;
 
+    /**
+     * 获取 自给定参数时间以来更新过的触发器
+     * @param lastUpdateTime
+     * @return
+     * @throws TriggerManagerException
+     */
   public List<Trigger> getAllTriggerUpdates(long lastUpdateTime)
       throws TriggerManagerException;
 
+    /**
+     * 获取triggerSource为给定参数，自给定参数时间以来更新过的触发器
+     * @param triggerSource
+     * @param lastUpdateTime
+     * @return
+     * @throws TriggerManagerException
+     */
   public List<Trigger> getTriggerUpdates(String triggerSource,
       long lastUpdateTime) throws TriggerManagerException;
 
-  public List<Trigger> getTriggers(String trigegerSource);
+    /**
+     * 获取triggerSource为给定参数的触发器
+     * @param triggerSource
+     * @return
+     * @throws TriggerManagerException
+     */
+  public List<Trigger> getTriggers(String triggerSource);
 
   public void start() throws TriggerManagerException;
 
   public void shutdown();
 
+    /**
+     * 注册触发器类型
+     * @param name
+     * @param checker
+     */
   public void registerCheckerType(String name,
       Class<? extends ConditionChecker> checker);
 
+    /**
+     * 注册触发器动作类型
+     * @param name
+     * @param action
+     */
   public void registerActionType(String name,
       Class<? extends TriggerAction> action);
 
   public TriggerJMX getJMX();
 
-  public interface TriggerJMX {
+
+    /**
+     *
+     */
+    public interface TriggerJMX {
     public long getLastRunnerThreadCheckTime();
 
     public boolean isRunnerThreadActive();

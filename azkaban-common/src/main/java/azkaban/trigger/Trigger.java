@@ -27,6 +27,9 @@ import org.joda.time.DateTime;
 
 import azkaban.utils.JSONUtils;
 
+/**
+ * 触发器，
+ */
 public class Trigger {
 
   private static Logger logger = Logger.getLogger(Trigger.class);
@@ -38,14 +41,17 @@ public class Trigger {
   private String source;
   private TriggerStatus status = TriggerStatus.READY;
 
-  private Condition triggerCondition;
-  private Condition expireCondition;
+  private Condition triggerCondition;//触发条件
+  private Condition expireCondition;//过期条件
+    /** 需要触发的动作*/
   private List<TriggerAction> actions;
+    /** 触发器过期的动作*/
   private List<TriggerAction> expireActions;
 
   private Map<String, Object> info = new HashMap<String, Object>();
   private Map<String, Object> context = new HashMap<String, Object>();
 
+    /** 触发器动作类型加载器，记录着所有的动作类型和对应的动作类*/
   private static ActionTypeLoader actionTypeLoader;
 
   private boolean resetOnTrigger = true;
@@ -58,6 +64,9 @@ public class Trigger {
     throw new TriggerManagerException("Triggers should always be specified");
   }
 
+    /**
+     * 更新下次检查时间，取 触发条件和过期条件的下次检查时间的最小值
+     */
   public void updateNextCheckTime() {
     this.nextCheckTime =
         Math.min(triggerCondition.getNextCheckTime(),
@@ -429,6 +438,9 @@ public class Trigger {
         + expireCondition.getExpression() + actionsString;
   }
 
+    /**
+     * 停止所有条件检查器
+     */
   public void stopCheckers() {
     for (ConditionChecker checker : triggerCondition.getCheckers().values()) {
       checker.stopChecker();

@@ -88,6 +88,10 @@ public class TriggerManager extends EventHandler implements
     logger.info("TriggerManager loaded.");
   }
 
+    /**
+     * 加载所有触发器，并启动触发器扫描线程
+     * @throws TriggerManagerException
+     */
   @Override
   public void start() throws TriggerManagerException {
 
@@ -181,8 +185,13 @@ public class TriggerManager extends EventHandler implements
     return checkerTypeLoader.getSupportedCheckers();
   }
 
+    /**
+     * 触发器扫描线程
+     */
   private class TriggerScannerThread extends Thread {
+        /** 可阻塞等待的队列*/
     private BlockingQueue<Trigger> triggers;
+        /** 记录最近完成的任务流*/
     private Map<Integer, ExecutableFlow> justFinishedFlows;
     private boolean shutdown = false;
     private final long scannerInterval;
@@ -257,6 +266,12 @@ public class TriggerManager extends EventHandler implements
       }
     }
 
+        /**
+         * 遍历注册的触发器列表，检查各个触发器的状态。
+         * 对于达到触发条件的，执行触发动作，并更新下次检查时间；
+         * 对于达到过期条件的，执行过期触发动作，并移除触发器。
+         * @throws TriggerManagerException
+         */
     private void checkAllTriggers() throws TriggerManagerException {
       long now = System.currentTimeMillis();
 
@@ -303,6 +318,11 @@ public class TriggerManager extends EventHandler implements
       }
     }
 
+        /**
+         * 触发单一触发器，并更新触发器
+         * @param t
+         * @throws TriggerManagerException
+         */
     private void onTriggerTrigger(Trigger t) throws TriggerManagerException {
       List<TriggerAction> actions = t.getTriggerActions();
       for (TriggerAction action : actions) {
@@ -328,6 +348,11 @@ public class TriggerManager extends EventHandler implements
       }
     }
 
+        /**
+         * 执行触发器的过期动作，并更新触发器
+         * @param t
+         * @throws TriggerManagerException
+         */
     private void onTriggerExpire(Trigger t) throws TriggerManagerException {
       List<TriggerAction> expireActions = t.getExpireActions();
       for (TriggerAction action : expireActions) {
@@ -355,6 +380,9 @@ public class TriggerManager extends EventHandler implements
       }
     }
 
+        /**
+         * 触发器比较算子，根据下次检查时间递增排序
+         */
     private class TriggerComparator implements Comparator<Trigger> {
       @Override
       public int compare(Trigger arg0, Trigger arg1) {
@@ -393,6 +421,13 @@ public class TriggerManager extends EventHandler implements
     return triggers;
   }
 
+    /**
+     * 获取triggerSource为给定参数，自给定参数时间以来更新过的触发器
+     * @param triggerSource
+     * @param lastUpdateTime
+     * @return
+     * @throws TriggerManagerException
+     */
   @Override
   public List<Trigger> getTriggerUpdates(String triggerSource,
       long lastUpdateTime) throws TriggerManagerException {
@@ -406,6 +441,12 @@ public class TriggerManager extends EventHandler implements
     return triggers;
   }
 
+    /**
+     * 获取 自给定参数时间以来更新过的触发器
+     * @param lastUpdateTime
+     * @return
+     * @throws TriggerManagerException
+     */
   @Override
   public List<Trigger> getAllTriggerUpdates(long lastUpdateTime)
       throws TriggerManagerException {
@@ -435,6 +476,9 @@ public class TriggerManager extends EventHandler implements
     updateTrigger(t);
   }
 
+    /**
+     * 关闭触发器扫描线程
+     */
   @Override
   public void shutdown() {
     runnerThread.shutdown();
@@ -510,6 +554,15 @@ public class TriggerManager extends EventHandler implements
     actionTypeLoader.registerActionType(name, action);
   }
 
+    /**
+     * <pre>
+     * 事件监听，处理任务流结束，将结束的任务流加入最近完成列表中.
+     * {@link ExecutorManager}已经继承了{@link EventListener}，
+     * 将该类的对象注册到{@link ExecutorManager}中，
+     * 在任务流完成（未必是success）的时候将会遍历所有的事件监听器，
+     * 并执行监听器的{@link EventListener#handleEvent(Event)}方法
+     * </pre>
+     */
   private class ExecutorManagerEventListener implements EventListener {
     public ExecutorManagerEventListener() {
     }

@@ -18,6 +18,10 @@ package azkaban.trigger;
 
 import azkaban.utils.Props;
 
+/**
+ * 触发器代理，主要用于触发器的管理（利用{@link azkaban.scheduler.ScheduleLoader}将所有的调度计划加载到调度计划列表中，并不断更新和维护这个列表，保证列表中的所有调度计划都处于非过期的状态）
+ * ，更新每个Schedule的下次执行时间
+ */
 public interface TriggerAgent {
   public void loadTriggerFromProps(Props props) throws Exception;
 

@@ -26,6 +26,10 @@ import org.joda.time.ReadablePeriod;
 import azkaban.trigger.ConditionChecker;
 import azkaban.utils.Utils;
 
+/**
+ * 时间检查器，实现{@link ConditionChecker}接口。
+ * 用于每一个Schedule调度计划的时间计算，包括开始执行时间（生效时间）、下次检查时间、过期时间
+ */
 public class BasicTimeChecker implements ConditionChecker {
 
   public static final String type = "BasicTimeChecker";
@@ -88,6 +92,10 @@ public class BasicTimeChecker implements ConditionChecker {
     this.period = period;
   }
 
+    /**
+     * 重置下次检查时间
+     * @return
+     */
   @Override
   public Boolean eval() {
     return nextCheckTime < System.currentTimeMillis();

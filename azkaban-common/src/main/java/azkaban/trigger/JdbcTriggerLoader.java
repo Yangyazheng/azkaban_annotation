@@ -36,12 +36,17 @@ import azkaban.utils.GZIPUtils;
 import azkaban.utils.JSONUtils;
 import azkaban.utils.Props;
 
+/**
+ * azkaban trigger加载器接口{@link TriggerLoader}的默认实现，
+ * 从数据库中加载触发器，触发器列表的更新等操作也是在数据库中进行
+ */
 public class JdbcTriggerLoader extends AbstractJdbcLoader implements
     TriggerLoader {
   private static Logger logger = Logger.getLogger(JdbcTriggerLoader.class);
 
   private EncodingType defaultEncodingType = EncodingType.GZIP;
 
+    /** 存储触发器的数据库表名*/
   private static final String triggerTblName = "triggers";
 
   private static final String GET_UPDATED_TRIGGERS =

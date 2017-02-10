@@ -27,10 +27,16 @@ import org.apache.commons.jexl2.MapContext;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
+/**
+ * 触发器开始和结束的条件
+ */
 public class Condition {
 
   private static Logger logger = Logger.getLogger(Condition.class);
 
+    /**
+     * 表达式计算引擎，如计算字符串："a+b-c"，并分别设置a、b、c的值，可以计算出字符串表达式的值
+     */
   private static JexlEngine jexl = new JexlEngine();
   private static CheckerTypeLoader checkerLoader = null;
   private Expression expression;
@@ -92,6 +98,9 @@ public class Condition {
     }
   }
 
+    /**
+     * 更新下次检查时间，从检查器列表中找到距离现在最近的时间作为下次检查时间
+     */
   private void updateNextCheckTime() {
     long time = Long.MAX_VALUE;
     for (ConditionChecker checker : checkers.values()) {
@@ -100,6 +109,9 @@ public class Condition {
     this.nextCheckTime = time;
   }
 
+    /**
+     * 遍历所有检查器，并重置所有检查器
+     */
   public void resetCheckers() {
     for (ConditionChecker checker : checkers.values()) {
       checker.reset();

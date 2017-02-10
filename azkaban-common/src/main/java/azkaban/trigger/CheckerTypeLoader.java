@@ -24,6 +24,9 @@ import org.apache.log4j.Logger;
 import azkaban.utils.Props;
 import azkaban.utils.Utils;
 
+/**
+ * trigger条件检查器的类型加载器接口，加载并存放 检查器类型名称以及检查器类对应关系列表
+ */
 public class CheckerTypeLoader {
 
   private static Logger logger = Logger.getLogger(CheckerTypeLoader.class);
@@ -31,12 +34,18 @@ public class CheckerTypeLoader {
   public static final String DEFAULT_CONDITION_CHECKER_PLUGIN_DIR =
       "plugins/conditioncheckers";
 
+    /** 检查器类型名称以及检查器类对应关系列表*/
   protected static Map<String, Class<? extends ConditionChecker>> checkerToClass =
       new HashMap<String, Class<? extends ConditionChecker>>();
 
   public void init(Props props) throws TriggerException {
   }
 
+    /**
+     * 注册检查器类型，在列表中追加新的检查器类型
+     * @param type
+     * @param checkerClass
+     */
   public synchronized void registerCheckerType(String type,
       Class<? extends ConditionChecker> checkerClass) {
     logger.info("Registering checker " + type);
@@ -47,7 +56,7 @@ public class CheckerTypeLoader {
 
   public static void registerBuiltinCheckers(
       Map<String, Class<? extends ConditionChecker>> builtinCheckers) {
-    checkerToClass.putAll(checkerToClass);
+    checkerToClass.putAll(builtinCheckers);
     for (String type : builtinCheckers.keySet()) {
       logger.info("Loaded " + type + " checker.");
     }
@@ -68,6 +77,12 @@ public class CheckerTypeLoader {
     return checker;
   }
 
+    /**
+     * 创建{@link ConditionChecker}实例，根据type和构造函数的参数实例化具体的checker（反射）
+     * @param type
+     * @param args
+     * @return
+     */
   public ConditionChecker createChecker(String type, Object... args) {
     ConditionChecker checker = null;
     Class<? extends ConditionChecker> checkerClass = checkerToClass.get(type);

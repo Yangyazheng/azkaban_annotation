@@ -26,6 +26,10 @@ import azkaban.executor.ExecutorManagerException;
 import azkaban.executor.Status;
 import azkaban.trigger.ConditionChecker;
 
+/**
+ * 任务执行检查器，实现{@link ConditionChecker}，
+ * 每个(job,wantedStatus)都分配这样的一个执行检查器
+ */
 public class ExecutionChecker implements ConditionChecker {
 
   public static final String type = "ExecutionChecker";

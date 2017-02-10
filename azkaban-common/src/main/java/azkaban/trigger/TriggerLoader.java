@@ -18,14 +18,37 @@ package azkaban.trigger;
 
 import java.util.List;
 
+/**
+ * trigger加载器
+ */
 public interface TriggerLoader {
 
+    /**
+     * 增加触发器
+     * @param t
+     * @throws TriggerLoaderException
+     */
   public void addTrigger(Trigger t) throws TriggerLoaderException;
 
+    /**
+     * 移除触发器
+     * @param s
+     * @throws TriggerLoaderException
+     */
   public void removeTrigger(Trigger s) throws TriggerLoaderException;
 
+    /**
+     * 更新触发器
+     * @param t
+     * @throws TriggerLoaderException
+     */
   public void updateTrigger(Trigger t) throws TriggerLoaderException;
 
+    /**
+     * 加载所有触发器
+     * @return
+     * @throws TriggerLoaderException
+     */
   public List<Trigger> loadTriggers() throws TriggerLoaderException;
 
   public Trigger loadTrigger(int triggerId) throws TriggerLoaderException;

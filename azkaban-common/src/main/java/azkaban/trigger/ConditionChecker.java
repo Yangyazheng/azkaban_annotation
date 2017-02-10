@@ -18,16 +18,34 @@ package azkaban.trigger;
 
 import java.util.Map;
 
+/**
+ * 条件检查器
+ */
 public interface ConditionChecker {
 
+    /**
+     * 检查是否满足条件，如果返回的是true将会触发相应的action
+     * @return
+     */
   Object eval();
 
   Object getNum();
 
+    /**
+     * 重置条件
+     */
   void reset();
 
+    /**
+     * 获取检查器的id
+     * @return
+     */
   String getId();
 
+    /**
+     * 获取检查器的类型
+     * @return
+     */
   String getType();
 
   ConditionChecker fromJson(Object obj) throws Exception;

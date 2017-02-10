@@ -32,6 +32,10 @@ import azkaban.sla.SlaOption;
 import azkaban.trigger.ConditionChecker;
 import azkaban.utils.Utils;
 
+/**
+ * 任务流出错邮件提示检查器，实现{@link ConditionChecker}接口。
+ * 对应于每次执行分配一个这样的sla检查器
+ */
 public class SlaChecker implements ConditionChecker {
 
   private static final Logger logger = Logger.getLogger(SlaChecker.class);
@@ -42,6 +46,7 @@ public class SlaChecker implements ConditionChecker {
   private int execId;
   private long checkTime = -1;
 
+    /** 执行节点管理器*/
   private static ExecutorManagerAdapter executorManager;
 
   public SlaChecker(String id, SlaOption slaOption, int execId) {
@@ -95,7 +100,7 @@ public class SlaChecker implements ConditionChecker {
       if (node.getStartTime() < 0) {
         return Boolean.FALSE;
       }
-      if (checkTime < node.getStartTime()) {
+      if (checkTime < node.getStartTime()) {//更新下次检查时间
         ReadablePeriod duration =
             Utils.parsePeriodString((String) slaOption.getInfo().get(
                 SlaOption.INFO_DURATION));

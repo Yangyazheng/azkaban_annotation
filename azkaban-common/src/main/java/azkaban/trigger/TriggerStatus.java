@@ -16,6 +16,10 @@
 
 package azkaban.trigger;
 
+/**
+ * 触发器状态，
+ * 包含{@link TriggerStatus#READY}、{@link TriggerStatus#PAUSED}、{@link TriggerStatus#EXPIRED}
+ */
 public enum TriggerStatus {
   READY(10), PAUSED(20), EXPIRED(30);
 
