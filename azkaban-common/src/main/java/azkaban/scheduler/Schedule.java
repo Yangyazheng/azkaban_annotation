@@ -36,6 +36,9 @@ import azkaban.executor.ExecutionOptions;
 import azkaban.sla.SlaOption;
 import azkaban.utils.Pair;
 
+/**
+ * 调度计划，主要用于展示已经设置的调度计划，包含时区、周期、下次执行时间、提交时间等
+ */
 public class Schedule {
 
   private int scheduleId;
@@ -182,6 +185,12 @@ public class Schedule {
     return submitTime;
   }
 
+    /**
+     * 是否更新当前调度信息，
+     * 根据当前时间是否在应该执行的时间之后，若是返回true；
+     * 否则，重新更新下次执行时间，并返回true，如果不是周期性计划，直接返回false
+     * @return
+     */
   public boolean updateTime() {
     if (new DateTime(nextExecTime).isAfterNow()) {
       return true;

@@ -959,6 +959,14 @@ public class ExecutorManager extends EventHandler implements
     }
   }
 
+    /**
+     * 向合适的执行节点上传可执行任务流，进入执行节点的执行队列中。
+     * 在次之前检测各种条件是否满足
+     * @param exflow
+     * @param userId
+     * @return
+     * @throws ExecutorManagerException
+     */
   @Override
   public String submitExecutableFlow(ExecutableFlow exflow, String userId)
     throws ExecutorManagerException {

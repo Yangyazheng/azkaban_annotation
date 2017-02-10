@@ -33,6 +33,10 @@ import azkaban.trigger.TriggerManagerException;
 import azkaban.trigger.builtin.BasicTimeChecker;
 import azkaban.trigger.builtin.ExecuteFlowAction;
 
+/**
+ * 基于触发器的调度加载器
+ * @see ScheduleLoader
+ */
 public class TriggerBasedScheduleLoader implements ScheduleLoader {
 
   private static Logger logger = Logger
@@ -50,8 +54,15 @@ public class TriggerBasedScheduleLoader implements ScheduleLoader {
     this.triggerSource = triggerSource;
   }
 
+    /**
+     * 将调度计划{@link Schedule}转换为触发器{@link Trigger}
+     * @param s
+     * @return
+     */
   private Trigger scheduleToTrigger(Schedule s) {
+      /** 触发条件 */
     Condition triggerCondition = createTriggerCondition(s);
+      /** 过期条件 */
     Condition expireCondition = createExpireCondition(s);
     List<TriggerAction> actions = createActions(s);
     Trigger t =
@@ -142,6 +153,12 @@ public class TriggerBasedScheduleLoader implements ScheduleLoader {
 
   }
 
+    /**
+     * 触发器{@link Trigger}转换到调度计划{@link Schedule}
+     * @param t
+     * @return
+     * @throws ScheduleManagerException
+     */
   private Schedule triggerToSchedule(Trigger t) throws ScheduleManagerException {
     Condition triggerCond = t.getTriggerCondition();
     Map<String, ConditionChecker> checkers = triggerCond.getCheckers();
@@ -186,6 +203,11 @@ public class TriggerBasedScheduleLoader implements ScheduleLoader {
 
   }
 
+    /**
+     * 更新下次执行时间（目前该方法do nothing）
+     * @param s
+     * @throws ScheduleManagerException
+     */
   @Override
   public void updateNextExecTime(Schedule s) throws ScheduleManagerException {
 

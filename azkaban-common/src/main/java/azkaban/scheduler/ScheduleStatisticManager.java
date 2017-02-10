@@ -25,11 +25,12 @@ import java.util.Map;
 import azkaban.utils.JSONUtils;
 
 /**
- * TODO: This needs to be fleshed out and made into a proper singleton.
- *
+ * <pre>
  * 每个scheduleId的缓存数据放在一个单独的文件中，
  * 这些文件放在同一个目录下
  * 文件命名为：scheduleId.cache
+ * </pre>
+ * TODO: This needs to be fleshed out and made into a proper singleton.
  */
 public class ScheduleStatisticManager {
     public static final int STAT_NUMBERS = 10;

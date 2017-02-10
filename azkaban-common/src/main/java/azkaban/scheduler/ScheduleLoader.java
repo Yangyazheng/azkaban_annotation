@@ -18,6 +18,9 @@ package azkaban.scheduler;
 
 import java.util.List;
 
+/**
+ * 调度计划加载器接口
+ */
 public interface ScheduleLoader {
 
   public void insertSchedule(Schedule s) throws ScheduleManagerException;

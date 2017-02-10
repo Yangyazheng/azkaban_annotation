@@ -40,6 +40,7 @@ import azkaban.utils.Props;
  * instead and waits until correct loading time for the flow. It will not remove
  * the flow from the schedule when it is run, which can potentially allow the
  * flow to and overlap each other.
+ * 每一次调用{@link ScheduleManager#insertSchedule}的时候都会更新调度计划列表中对应的任务流的下次执行时间
  */
 public class ScheduleManager implements TriggerAgent {
   private static Logger logger = Logger.getLogger(ScheduleManager.class);
@@ -64,6 +65,10 @@ public class ScheduleManager implements TriggerAgent {
     this.loader = loader;
   }
 
+    /**
+     * 利用{@link ScheduleLoader}加载调度计划,移除过期计划，将没有过期的计划在本对象中记录跟踪
+     * @throws ScheduleManagerException
+     */
   @Override
   public void start() throws ScheduleManagerException {
     List<Schedule> scheduleList = null;
@@ -96,6 +101,10 @@ public class ScheduleManager implements TriggerAgent {
     }
   }
 
+    /**
+     * 从本对象的调度计划记录中移除那些过期的计划
+     * @param s
+     */
   private void onScheduleExpire(Schedule s) {
     removeSchedule(s);
   }
@@ -124,11 +133,8 @@ public class ScheduleManager implements TriggerAgent {
   /**
    * Returns the scheduled flow for the flow name
    *
-   * @param id
-   * @return
    * @throws ScheduleManagerException
    */
-
   public Schedule getSchedule(int projectId, String flowId)
       throws ScheduleManagerException {
     updateLocal();
@@ -139,8 +145,6 @@ public class ScheduleManager implements TriggerAgent {
   /**
    * Returns the scheduled flow for the scheduleId
    *
-   * @param id
-   * @return
    * @throws ScheduleManagerException
    */
   public Schedule getSchedule(int scheduleId) throws ScheduleManagerException {
@@ -151,7 +155,6 @@ public class ScheduleManager implements TriggerAgent {
   /**
    * Removes the flow from the schedule if it exists.
    *
-   * @param id
    * @throws ScheduleManagerException
    */
 
@@ -164,9 +167,10 @@ public class ScheduleManager implements TriggerAgent {
   }
 
   /**
+   * 从调度计划列表中移除计划
    * Removes the flow from the schedule if it exists.
    *
-   * @param id
+   * @param sched
    */
   public synchronized void removeSchedule(Schedule sched) {
     Pair<Integer, String> identityPairMap = sched.getScheduleIdentityPair();
@@ -185,6 +189,22 @@ public class ScheduleManager implements TriggerAgent {
     }
   }
 
+    /**
+     * 为任务流创建调度计划，并加到计划列表中
+     * @param scheduleId
+     * @param projectId
+     * @param projectName
+     * @param flowName
+     * @param status
+     * @param firstSchedTime
+     * @param timezone
+     * @param period
+     * @param lastModifyTime
+     * @param nextExecTime
+     * @param submitTime
+     * @param submitUser
+     * @return
+     */
   public Schedule scheduleFlow(final int scheduleId, final int projectId,
       final String projectName, final String flowName, final String status,
       final long firstSchedTime, final DateTimeZone timezone,
@@ -195,6 +215,24 @@ public class ScheduleManager implements TriggerAgent {
         submitTime, submitUser, null, null);
   }
 
+    /**
+     * 为任务流创建调度计划，并加到计划列表中
+     * @param scheduleId
+     * @param projectId
+     * @param projectName
+     * @param flowName
+     * @param status
+     * @param firstSchedTime
+     * @param timezone
+     * @param period
+     * @param lastModifyTime
+     * @param nextExecTime
+     * @param submitTime
+     * @param submitUser
+     * @param execOptions
+     * @param slaOptions
+     * @return
+     */
   public Schedule scheduleFlow(final int scheduleId, final int projectId,
       final String projectName, final String flowName, final String status,
       final long firstSchedTime, final DateTimeZone timezone,
@@ -217,7 +255,7 @@ public class ScheduleManager implements TriggerAgent {
   /**
    * Schedules the flow, but doesn't save the schedule afterwards.
    *
-   * @param flow
+   * @param s
    */
   private synchronized void internalSchedule(Schedule s) {
     scheduleIDMap.put(s.getScheduleId(), s);
@@ -226,8 +264,9 @@ public class ScheduleManager implements TriggerAgent {
 
   /**
    * Adds a flow to the schedule.
+   * 对于已经存在的调度计划，将会重新计算下次执行时间，并更新调度计划列表中的下次执行时间
    *
-   * @param flow
+   * @param s
    */
   public synchronized void insertSchedule(Schedule s) {
     Schedule exist = scheduleIdentityPairMap.get(s.getScheduleIdentityPair());
