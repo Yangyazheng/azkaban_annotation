@@ -30,7 +30,8 @@ import azkaban.project.Project;
 import azkaban.utils.TypedMapWrapper;
 
 /**
- * 任务流节点，不是普通任务（非普通job）
+ * 任务流节点，不是普通任务（非普通job）---更正：内嵌任务流，是顶层任务流的父类，
+ * @see SpecialJobTypes#EMBEDDED_FLOW_TYPE
  */
 public class ExecutableFlowBase extends ExecutableNode {
   public static final String FLOW_ID_PARAM = "flowId";

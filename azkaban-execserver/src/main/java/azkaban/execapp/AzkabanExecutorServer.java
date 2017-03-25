@@ -86,8 +86,11 @@ public class AzkabanExecutorServer {
 
   private static AzkabanExecutorServer app;
 
+    //不仅仅是对执行节点的管理，还包括产生最佳执行节点，并向该节点提交任务，跟踪任务流的执行
   private ExecutorLoader executionLoader;
+    //project加载器接口,对project进行管理，包括project版本、清除旧版本、设置属性，增删改查project、上传project文件等
   private ProjectLoader projectLoader;
+    //
   private FlowRunnerManager runnerManager;
   private Props props;
   private Props executorGlobalProps;

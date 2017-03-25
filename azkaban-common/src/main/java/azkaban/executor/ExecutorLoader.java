@@ -26,7 +26,8 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 
 /**
- * 执行节点加载器接口
+ * 执行节点加载器接口,
+ * 不仅仅是对执行节点的管理，还包括产生最佳执行节点，并向该节点提交任务，跟踪任务流的执行
  */
 public interface ExecutorLoader {
   public void uploadExecutableFlow(ExecutableFlow flow)
@@ -252,6 +253,12 @@ public interface ExecutorLoader {
   public void updateExecutableFlow(ExecutableFlow flow)
       throws ExecutorManagerException;
 
+    /**
+     * 上传可执行任务（普通任务）
+     * @param node
+     * @param inputParams
+     * @throws ExecutorManagerException
+     */
   public void uploadExecutableNode(ExecutableNode node, Props inputParams)
       throws ExecutorManagerException;
 

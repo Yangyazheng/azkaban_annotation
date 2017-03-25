@@ -39,7 +39,13 @@ import azkaban.utils.PropsUtils;
  * 
  * The HTTP request and response will be logged out the job's log for debugging
  * and traceability purpose.
- * 
+ *
+ * <pre>
+ * 实现{@link EventListener}接口，这是整个系统中事件监听的最抽象的基类。
+ * 本类{@link JobCallbackManager}可能的行为：当任务开始或者处于结束（有多种）的状态时，通过HTTP请求的方式告知其他所有执行节点
+ * 上述行为还未进一步印证；
+ * 但是，当任务状态为开始或者结束的时候，毫无疑问地会通过HTTP的方式发送请求，并将响应消息在日志中记录
+ * </pre>
  * @author hluu
  *
  */

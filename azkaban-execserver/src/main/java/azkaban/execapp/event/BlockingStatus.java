@@ -18,6 +18,10 @@ package azkaban.execapp.event;
 
 import azkaban.executor.Status;
 
+/**
+ * 封装对任务特定状态的阻塞等待，任务状态的修改
+ * 对应于一次任务的执行中状态变迁，状态的等待
+ */
 public class BlockingStatus {
   private static final long WAIT_TIME = 5 * 60 * 1000;
   private final int execId;

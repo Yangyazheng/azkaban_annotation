@@ -28,7 +28,7 @@ import azkaban.project.Project;
 import azkaban.utils.TypedMapWrapper;
 
 /**
- * 任务节点，普通job
+ * 任务节点，普通job---更正：是top level flow，最外层任务流
  */
 public class ExecutableFlow extends ExecutableFlowBase {
   public static final String EXECUTIONID_PARAM = "executionId";

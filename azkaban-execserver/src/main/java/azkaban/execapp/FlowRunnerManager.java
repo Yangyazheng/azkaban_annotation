@@ -99,7 +99,7 @@ import azkaban.executor.Status;
  * runningFlows：只是用于记录在FlowRunnerManager中被提交执行的流，与用于执行一系列流的执行器executor服务没有任何关系。
  * 用于取消或者是kill掉流。这些流会在实现{@link EventListener#handleEvent(Event)}的方法中，当处于{@link Event.Type#FLOW_FINISHED}状态的时候，将从这个列表中移除。
  *
- *
+ * submittedFlows:用于跟踪，这里面的任务流要么处于等待执行状态，要么处于正在执行状态
  */
 public class FlowRunnerManager implements EventListener,
     ThreadPoolExecutingListener {
@@ -116,9 +116,12 @@ public class FlowRunnerManager implements EventListener,
   // recently finished secs to clean up. 1 minute
   private static final long RECENTLY_FINISHED_TIME_TO_LIVE = 60 * 1000;
 
+    //默认值：可以同时执行的任务流数量
   private static final int DEFAULT_NUM_EXECUTING_FLOWS = 30;
+    //默认值：每个任务流中可以同时执行的任务数量
   private static final int DEFAULT_FLOW_NUM_JOB_TREADS = 10;
 
+  /** 已经加载的project*/
   private Map<Pair<Integer, Integer>, ProjectVersion> installedProjects =
       new ConcurrentHashMap<Pair<Integer, Integer>, ProjectVersion>();
   // this map is used to store the flows that have been submitted to
@@ -126,17 +129,20 @@ public class FlowRunnerManager implements EventListener,
   // in the queue waiting to be executed or in executing state.
   private Map<Future<?>, Integer> submittedFlows =
       new ConcurrentHashMap<Future<?>, Integer>();
+    /** 运行中的任务流*/
   private Map<Integer, FlowRunner> runningFlows =
       new ConcurrentHashMap<Integer, FlowRunner>();
+    /** 最近完成的任务流*/
   private Map<Integer, ExecutableFlow> recentlyFinishedFlows =
       new ConcurrentHashMap<Integer, ExecutableFlow>();
 
+    /** 允许同时执行的任务流数量*/  //可以在配置文件中指定任务流数目，也可以使用这个默认值
   private int numThreads = DEFAULT_NUM_EXECUTING_FLOWS;
   private int threadPoolQueueSize = -1;
 
   private TrackingThreadPool executorService;
 
-  private CleanerThread cleanerThread;
+  private CleanerThread cleanerThread;//临时long、文件清理线程
   private int numJobThreadPerFlow = DEFAULT_FLOW_NUM_JOB_TREADS;
 
   private ExecutorLoader executorLoader;
@@ -178,10 +184,11 @@ public class FlowRunnerManager implements EventListener,
         props.getLong("execution.dir.retention", executionDirRetention);
     logger.info("Execution dir retention set to " + executionDirRetention
         + " ms");
-
+    //创建执行目录
     if (!executionDirectory.exists()) {
       executionDirectory.mkdirs();
     }
+    //创建project目录
     if (!projectDirectory.exists()) {
       projectDirectory.mkdirs();
     }
@@ -190,9 +197,9 @@ public class FlowRunnerManager implements EventListener,
 
     // azkaban.temp.dir
     numThreads =
-        props.getInt(EXECUTOR_FLOW_THREADS, DEFAULT_NUM_EXECUTING_FLOWS);
+        props.getInt(EXECUTOR_FLOW_THREADS, DEFAULT_NUM_EXECUTING_FLOWS);//设置可以同时执行任务流的数量
     numJobThreadPerFlow =
-        props.getInt(FLOW_NUM_JOB_THREADS, DEFAULT_FLOW_NUM_JOB_TREADS);
+        props.getInt(FLOW_NUM_JOB_THREADS, DEFAULT_FLOW_NUM_JOB_TREADS);//设置每个任务流中可以同时执行的任务数量
     executorService = createExecutorService(numThreads);
 
     this.executorLoader = executorLoader;
@@ -220,6 +227,11 @@ public class FlowRunnerManager implements EventListener,
             parentClassLoader);
   }
 
+    /**
+     *
+     * @param nThreads
+     * @return
+     */
   private TrackingThreadPool createExecutorService(int nThreads) {
     boolean useNewThreadPool =
         azkabanProps.getBoolean(EXECUTOR_USE_BOUNDED_THREADPOOL_QUEUE, false);
@@ -246,6 +258,10 @@ public class FlowRunnerManager implements EventListener,
     }
   }
 
+    /**
+     * 加载已经存在的project
+     * @return
+     */
   private Map<Pair<Integer, Integer>, ProjectVersion> loadExistingProjects() {
     Map<Pair<Integer, Integer>, ProjectVersion> allProjects =
         new HashMap<Pair<Integer, Integer>, ProjectVersion>();
@@ -257,7 +273,7 @@ public class FlowRunnerManager implements EventListener,
       public boolean accept(File dir, String name) {
         return name.matches(pattern);
       }
-    })) {
+    })) {//for
       if (project.isDirectory()) {
         try {
           String fileName = new File(project.getAbsolutePath()).getName();
@@ -290,6 +306,10 @@ public class FlowRunnerManager implements EventListener,
     this.globalProps = globalProps;
   }
 
+    /**
+     * 运行过程中的清理线程，
+     * 清理执行目录、就版本project目录、最近完成的任务流列表
+     */
   private class CleanerThread extends Thread {
     // Every hour, clean execution dir.
     private static final long EXECUTION_DIR_CLEAN_INTERVAL_MS = 60 * 60 * 1000;
@@ -340,7 +360,7 @@ public class FlowRunnerManager implements EventListener,
               lastExecutionDirCleanTime = currentTime;
             }
 
-            wait(RECENTLY_FINISHED_TIME_TO_LIVE);
+            wait(RECENTLY_FINISHED_TIME_TO_LIVE);//等待一分钟，继续检查
           } catch (InterruptedException e) {
             logger.info("Interrupted. Probably to shut down.");
           } catch (Throwable t) {
@@ -897,6 +917,10 @@ public class FlowRunnerManager implements EventListener,
   public void beforeExecute(Runnable r) {
   }
 
+    /**
+     * 执行之后，从已经提交的任务流中移除
+     * @param r
+     */
   @Override
   public void afterExecute(Runnable r) {
     submittedFlows.remove(r);

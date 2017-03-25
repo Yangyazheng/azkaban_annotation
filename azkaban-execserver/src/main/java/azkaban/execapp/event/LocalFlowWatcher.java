@@ -23,6 +23,9 @@ import azkaban.execapp.FlowRunner;
 import azkaban.execapp.JobRunner;
 import azkaban.executor.ExecutableNode;
 
+/**
+ * 本地任务流运行过程中的观察者
+ */
 public class LocalFlowWatcher extends FlowWatcher {
   private LocalFlowWatcherListener watcherListener;
   private FlowRunner runner;
@@ -37,6 +40,10 @@ public class LocalFlowWatcher extends FlowWatcher {
     runner.addListener(watcherListener);
   }
 
+  /**
+   * 停止任务流的监听,
+   * 移除{@link LocalFlowWatcherListener}，并调用父类的解锁所有监听器
+   */
   @Override
   public void stopWatcher() {
     // Just freeing stuff
@@ -52,25 +59,28 @@ public class LocalFlowWatcher extends FlowWatcher {
     super.unblockAllWatches();
   }
 
+    /**
+     * 本地任务流运行过程中的观察者监听器
+     */
   public class LocalFlowWatcherListener implements EventListener {
     @Override
     public void handleEvent(Event event) {
-      if (event.getType() == Type.JOB_FINISHED) {
-        if (event.getRunner() instanceof FlowRunner) {
+      if (event.getType() == Type.JOB_FINISHED) {//更新任务节点的状态
+        if (event.getRunner() instanceof FlowRunner) {//任务节点是任务流
           // The flow runner will finish a job without it running
           Object data = event.getData();
           if (data instanceof ExecutableNode) {
             ExecutableNode node = (ExecutableNode) data;
             handleJobStatusChange(node.getNestedId(), node.getStatus());
           }
-        } else if (event.getRunner() instanceof JobRunner) {
+        } else if (event.getRunner() instanceof JobRunner) {//普通任务
           // A job runner is finished
           JobRunner runner = (JobRunner) event.getRunner();
           ExecutableNode node = runner.getNode();
           System.out.println(node + " looks like " + node.getStatus());
           handleJobStatusChange(node.getNestedId(), node.getStatus());
         }
-      } else if (event.getType() == Type.FLOW_FINISHED) {
+      } else if (event.getType() == Type.FLOW_FINISHED) {//如果是任务流结束，将停止这个任务流中所有任务的监听
         stopWatcher();
       }
     }

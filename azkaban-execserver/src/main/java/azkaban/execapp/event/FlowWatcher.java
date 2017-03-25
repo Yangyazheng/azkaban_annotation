@@ -25,6 +25,15 @@ import azkaban.executor.ExecutableFlow;
 import azkaban.executor.ExecutableNode;
 import azkaban.executor.Status;
 
+/**
+ * <pre>
+ * 任务流运行过程中的监听器，
+ * 每个任务（普通任务或内嵌任务流）对应一个阻塞状态
+ * 本类主要通过维护一个这样的阻塞列表，并提供对任务运行状态的修改，
+ * 解锁所有任务的阻塞状态
+ * 当状态处于完成状态种类中的任何一个的时候,将解锁当前阻塞状态，并使用Object的notifyAll
+ *</pre>
+ */
 public abstract class FlowWatcher {
   private Logger logger;
 
@@ -111,5 +120,8 @@ public abstract class FlowWatcher {
     return cancelWatch;
   }
 
+    /**
+     * 停止任务流的监听
+     */
   public abstract void stopWatcher();
 }

@@ -17,7 +17,8 @@
 package azkaban.event;
 
 /**
- * 事件监听接口
+ * 事件监听接口,这个系统中对任务、任务流的监听都是通过这个接口；
+ * 这是整个系统中事件监听机制的最抽象的基类
  */
 public interface EventListener {
     /**

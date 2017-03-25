@@ -31,6 +31,7 @@ import azkaban.utils.PropsUtils;
 import azkaban.utils.TypedMapWrapper;
 
 /**
+ * 普通任务
  * Base Executable that nodes and flows are based.
  * 执行过程中流里面的job、任务流的基类，封装了任务流运行过程中任务或者是任务流所需要的信息
  */

@@ -33,6 +33,10 @@ import azkaban.utils.Props;
  * 
  * One of the requirements is to log out the request information and response
  * using the given logger, which should be the job logger.
+ * <pre>
+ * 统一设置和管理任务请求的响应回调处理，单例。
+ * 创建带有回调方法的请求，（主要用到的是{@link java.util.concurrent.Future},支持在等待的事件完成之后执行特定的函数，进行相应的处理）
+ * </pre>
  * 
  * @author hluu
  *
@@ -125,6 +129,12 @@ public class JobCallbackRequestMaker {
     return futureRequestExecutionService.metrics();
   }
 
+    /**
+     * 发送回调式请求，记录响应消息
+     * @param jobId
+     * @param logger
+     * @param httpRequestList
+     */
   public void makeHttpRequest(String jobId, Logger logger,
       List<HttpRequestBase> httpRequestList) {
 
@@ -143,6 +153,7 @@ public class JobCallbackRequestMaker {
       }
       logger.info("]");
 
+        /** 利用{@link java.util.concurrent.Future}的执行回调进行日志记录HTTP请求的响应*/
       HttpRequestFutureTask<Integer> task =
           futureRequestExecutionService.execute(httpRequest,
               HttpClientContext.create(), new LoggingResponseHandler(logger));
@@ -177,7 +188,8 @@ public class JobCallbackRequestMaker {
   /**
    * Response handler for logging job callback response using the given logger
    * instance
-   * 
+   * {@link java.util.concurrent.Future}回调处理，打印HTTP响应报文。
+   * 只在日志中打印http响应报文中最多{@link MAX_RESPONSE_LINE_TO_PRINT}条记录
    * @author hluu
    *
    */

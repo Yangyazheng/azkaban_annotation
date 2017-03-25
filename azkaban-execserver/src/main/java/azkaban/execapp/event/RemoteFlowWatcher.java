@@ -25,6 +25,14 @@ import azkaban.executor.ExecutorLoader;
 import azkaban.executor.ExecutorManagerException;
 import azkaban.executor.Status;
 
+/**
+ * 远程任务流运行过程中的观察者
+ * 在本系统的设计中，执行节点管理器、任务流管理器、project管理器都是只存在一份
+ * 并存在各个节点之间，
+ * 这个更新线程，使用到的是对这些公共对象的引用，并调用这些对象中相应的方法，
+ * 对任务流执行过程中的相应的状态、信息等进行更新、监控等
+ * 处理其中的任务节点的信息、状态变迁等
+ */
 public class RemoteFlowWatcher extends FlowWatcher {
   private final static long CHECK_INTERVAL_MS = 60 * 1000;
 
@@ -61,6 +69,16 @@ public class RemoteFlowWatcher extends FlowWatcher {
     }
   }
 
+    /**
+     * <pre>
+     * 远程任务流更新线程，
+     * 在本系统的设计中，执行节点管理器、任务流管理器、project管理器都是只存在一份
+     * 并存在各个节点之间，
+     * 这个更新线程，使用到的是对这些公共对象的引用，并调用这些对象中相应的方法，
+     * 对任务流执行过程中的相应的状态、信息等进行更新、监控等
+     * 处理其中的任务节点的信息、状态变迁等
+     *</pre>
+     */
   private class RemoteUpdaterThread extends Thread {
     @Override
     public void run() {

@@ -1,0 +1,21 @@
+加载project、任务流的方式：
+    DirectoryFlowLoader
+
+
+执行节点选择算法
+    采用比较器列表流水式从多个方面进行比较（类似于比赛），
+    每一个比较器比较之后都会将这个比较器的权重值作为得分计算到对应的执行节点得分当中
+
+    并采用加时赛的方式保证最终选取出的最佳执行节点只有一个
+
+    特殊点：
+        默认过滤掉执行节点需要的最小空余内存6G
+        详情：在common模块中
+            azkaban.executor.selector.ExecutorFilter的 getMinimumReservedMemoryFilter方法
+
+
+学习完azkaban-common之后，可以从azkaban-execserver中的AzkabanExecutorServer作为入口，
+从以下三个类作为入口，可以整体上看到整个系统的大致脉络
+  private ExecutorLoader executionLoader;//不仅仅是对执行节点的管理，还包括产生最佳执行节点，并向该节点提交任务，跟踪任务流的执行
+  private ProjctLoader projectLoader;//project加载器接口,对project进行管理，包括project版本、清除旧版本、设置属性，增删改查project、上传project文件等
+  private FlowRunnerManager runnerManager;

@@ -31,6 +31,9 @@ import org.apache.log4j.Logger;
  * 
  * The content of this class is copied from article "Java theory and practice:
  * Instrumenting applications with JMX"
+ *
+ * 对java原始并行线程池的简单实现，便于对执行过程中数据的统计记录,
+ * 实际统计的是这个线程池已经执行的时间总数和已经执行的任务总数
  * 
  * @author hluu
  * 
@@ -100,6 +103,9 @@ public class TrackingThreadPool extends ThreadPoolExecutor {
     return (totalTasks == 0) ? 0 : totalTime / totalTasks;
   }
 
+    /**
+     * 空操作监听，实现{@link ThreadPoolExecutingListener}接口
+     */
   private static class NoOpThreadPoolExecutingListener implements
       ThreadPoolExecutingListener {
 

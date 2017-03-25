@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>azkaban.utils.Emailer</OriginalElement>
+  <nodes>
+    <node x="175.0" y="-120.0">azkaban.executor.mail.MailCreator</node>
+    <node x="153.0" y="156.0">azkaban.executor.mail.DefaultMailCreator</node>
+    <node x="-7.0" y="-122.0">azkaban.trigger.builtin.SendEmailAction</node>
+    <node x="0.0" y="0.0">azkaban.utils.AbstractMailer</node>
+    <node x="-21.0" y="156.0">azkaban.utils.EmailMessage</node>
+    <node x="78.0" y="80.0">azkaban.utils.Emailer</node>
+    <node x="137.0" y="0.0">azkaban.alert.Alerter</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="azkaban.utils.Emailer" target="azkaban.utils.EmailMessage">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="azkaban.trigger.builtin.SendEmailAction" target="azkaban.utils.AbstractMailer">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="azkaban.utils.Emailer" target="azkaban.alert.Alerter">
+      <point x="18.75" y="-15.0" />
+      <point x="134.25" y="55.0" />
+      <point x="172.5" y="55.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="azkaban.utils.Emailer" target="azkaban.utils.AbstractMailer">
+      <point x="-18.75" y="-15.0" />
+      <point x="96.75" y="55.0" />
+      <point x="58.5" y="55.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="azkaban.executor.mail.DefaultMailCreator" target="azkaban.executor.mail.MailCreator">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="azkaban.utils.AbstractMailer" target="azkaban.utils.EmailMessage">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="104.0" y="55.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

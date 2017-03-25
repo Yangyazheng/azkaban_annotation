@@ -66,7 +66,7 @@ import azkaban.utils.SwapQueue;
 
 /**
  * Class that handles the running of a ExecutableFlow DAG
- *
+ *  用于处理和执行单个任务流，以及管理这个任务流中的任务的执行
  */
 public class FlowRunner extends EventHandler implements Runnable {
   private static final Layout DEFAULT_LAYOUT = new PatternLayout(
@@ -86,6 +86,7 @@ public class FlowRunner extends EventHandler implements Runnable {
 
   private int execId;
   private File execDir;
+    /** 普通任务*/
   private final ExecutableFlow flow;
   private Thread flowRunnerThread;
   private int numJobThreads = 10;
@@ -103,7 +104,7 @@ public class FlowRunner extends EventHandler implements Runnable {
       .newSetFromMap(new ConcurrentHashMap<JobRunner, Boolean>());
 
   // Thread safe swap queue for finishedExecutions.
-  private SwapQueue<ExecutableNode> finishedNodes;
+  private SwapQueue<ExecutableNode> finishedNodes;//该对象保存两个列表，当add的时候其实使用的是第二个列表，读取值的时候是从第一个列表读取，当调用swap的时候，将第二个列表赋值给第一个列表，并清空第二个列表
 
   // Used for pipelining
   private Integer pipelineLevel = null;
@@ -280,10 +281,14 @@ public class FlowRunner extends EventHandler implements Runnable {
     }
 
     // The current thread is used for interrupting blocks
-    flowRunnerThread = Thread.currentThread();
+    flowRunnerThread = Thread.currentThread();//获取当前线程，用于监督当前线程是否依然还活跃，中断当前线程等
     flowRunnerThread.setName("FlowRunner-exec-" + flow.getExecutionId());
   }
 
+    /**
+     * 更新任务流的信息，默认实现中在数据库正在执行任务流中更新信息
+     * @throws ExecutorManagerException
+     */
   private void updateFlowReference() throws ExecutorManagerException {
     logger.info("Update active reference");
     if (!executorLoader.updateExecutableReference(execId,
@@ -297,6 +302,10 @@ public class FlowRunner extends EventHandler implements Runnable {
     updateFlow(System.currentTimeMillis());
   }
 
+    /**
+     * 更新任务流执行过程中的信息，包括任务流的状态
+     * @param time
+     */
   private synchronized void updateFlow(long time) {
     try {
       flow.setUpdateTime(time);
@@ -306,6 +315,10 @@ public class FlowRunner extends EventHandler implements Runnable {
     }
   }
 
+    /**
+     * 创建任务流对应的日志文件
+     * @param flowId
+     */
   private void createLogger(String flowId) {
     // Create logger
     String loggerName = execId + "." + flowId;
@@ -400,6 +413,10 @@ public class FlowRunner extends EventHandler implements Runnable {
     logger.info("Finished Flow");
   }
 
+    /**
+     * 重试所有的失败任务
+     * @throws IOException
+     */
   private void retryAllFailures() throws IOException {
     logger.info("Restarting all failed jobs");
 
@@ -409,7 +426,7 @@ public class FlowRunner extends EventHandler implements Runnable {
     this.flow.setStatus(Status.RUNNING);
 
     ArrayList<ExecutableNode> retryJobs = new ArrayList<ExecutableNode>();
-    resetFailedState(this.flow, retryJobs);
+    resetFailedState(this.flow, retryJobs);//递归设置任务流中的所有失败节点的状态
 
     for (ExecutableNode node : retryJobs) {
       if (node.getStatus() == Status.READY
@@ -429,8 +446,9 @@ public class FlowRunner extends EventHandler implements Runnable {
   }
 
   private boolean progressGraph() throws IOException {
-    finishedNodes.swap();
+    finishedNodes.swap();//获取最新完成的可并行任务列表
 
+      //检查已经完成的任务的完成状态，并生成下一批需要执行的任务列表
     // The following nodes are finished, so we'll collect a list of outnodes
     // that are candidates for running next.
     HashSet<ExecutableNode> nodesToCheck = new HashSet<ExecutableNode>();
@@ -440,22 +458,22 @@ public class FlowRunner extends EventHandler implements Runnable {
 
       // If a job is seen as failed, then we set the parent flow to
       // FAILED_FINISHING
-      if (node.getStatus() == Status.FAILED) {
+      if (node.getStatus() == Status.FAILED) {//以失败结束的任务
         // The job cannot be retried or has run out of retry attempts. We will
         // fail the job and its flow now.
-        if (!retryJobIfPossible(node)) {
+        if (!retryJobIfPossible(node)) {//如果不允许重新执行，将失败状态向外层传播
           propagateStatus(node.getParentFlow(), Status.FAILED_FINISHING);
-          if (failureAction == FailureAction.CANCEL_ALL) {
+          if (failureAction == FailureAction.CANCEL_ALL) {//如果任务流的执行失败处理选项是取消所有，那么终止当前任务流的执行
             this.kill();
           }
           this.flowFailed = true;
-        } else {
+        } else {//如果允许重新执行，将任务放入执行检查队列中
           nodesToCheck.add(node);
           continue;
         }
       }
 
-      if (outNodeIds.isEmpty()) {
+      if (outNodeIds.isEmpty()) {//如果没有出口任务节点，获取父亲任务流（上一层任务流）（可能是内嵌任务流，也可能是最外层任务流）的出口节点，并从父亲任务流切换到父亲的父亲任务流（上上层任务流）
         // There's no outnodes means it's the end of a flow, so we finalize
         // and fire an event.
         finalizeFlow(parentFlow);
@@ -471,7 +489,7 @@ public class FlowRunner extends EventHandler implements Runnable {
       // Add all out nodes from the finished job. We'll check against this set
       // to
       // see if any are candidates for running.
-      for (String nodeId : outNodeIds) {
+      for (String nodeId : outNodeIds) {//遍历出口节点，并将这些出口节点加入下批被检查执行的队列中
         ExecutableNode outNode = parentFlow.getExecutableNode(nodeId);
         nodesToCheck.add(outNode);
       }
@@ -481,7 +499,7 @@ public class FlowRunner extends EventHandler implements Runnable {
     // before
     // Instant kill or skip if necessary.
     boolean jobsRun = false;
-    for (ExecutableNode node : nodesToCheck) {
+    for (ExecutableNode node : nodesToCheck) {//遍历检查列表，执行处于就绪状态的任务（或内嵌任务流）
       if (Status.isStatusFinished(node.getStatus())
           || Status.isStatusRunning(node.getStatus())) {
         // Really shouldn't get in here.
@@ -491,7 +509,7 @@ public class FlowRunner extends EventHandler implements Runnable {
       jobsRun |= runReadyJob(node);
     }
 
-    if (jobsRun || finishedNodes.getSize() > 0) {
+    if (jobsRun || finishedNodes.getSize() > 0) {//如果有就绪任务运行，返回true
       updateFlow();
       return true;
     }
@@ -520,36 +538,42 @@ public class FlowRunner extends EventHandler implements Runnable {
       node.skipNode(System.currentTimeMillis());
       finishExecutableNode(node);
     } else if (nextNodeStatus == Status.READY) {
-      if (node instanceof ExecutableFlowBase) {
+      if (node instanceof ExecutableFlowBase) {//当节点是内嵌任务流的时候
         ExecutableFlowBase flow = ((ExecutableFlowBase) node);
         logger.info("Running flow '" + flow.getNestedId() + "'.");
         flow.setStatus(Status.RUNNING);
         flow.setStartTime(System.currentTimeMillis());
         prepareJobProperties(flow);
 
+          //运行内嵌任务流中那些开始的节点
         for (String startNodeId : ((ExecutableFlowBase) node).getStartNodes()) {
           ExecutableNode startNode = flow.getExecutableNode(startNodeId);
           runReadyJob(startNode);
         }
-      } else {
+      } else {//运行普通任务
         runExecutableNode(node);
       }
     }
     return true;
   }
 
+    /**
+     * retryJobIfPossible，对于没有超过失败重试次数的重新执行
+     * @param node
+     * @return
+     */
   private boolean retryJobIfPossible(ExecutableNode node) {
-    if (node instanceof ExecutableFlowBase) {
+    if (node instanceof ExecutableFlowBase) {//不允许重试任务流
       return false;
     }
 
-    if (node.getRetries() > node.getAttempt()) {
+    if (node.getRetries() > node.getAttempt()) {//等待重新执行时间间隔，上下文重置，设置重新执行环境
       logger.info("Job '" + node.getId() + "' will be retried. Attempt "
           + node.getAttempt() + " of " + node.getRetries());
       node.setDelayedExecution(node.getRetryBackoff());
       node.resetForRetry();
       return true;
-    } else {
+    } else {//重试次数用完
       if (node.getRetries() > 0) {
         logger.info("Job '" + node.getId() + "' has run out of retry attempts");
         // Setting delayed execution to 0 in case this is manually re-tried.
@@ -560,6 +584,14 @@ public class FlowRunner extends EventHandler implements Runnable {
     }
   }
 
+    /**
+     * 状态传播。
+     * 从当前节点向外传播状态，
+     * 不管是普通任务还是内嵌的任务流，通过本方法由内向外将当前节点的状态传播到外部任务流，
+     * 比如：当前节点执行失败，将失败状态一层层传递，最终整个最外层任务流的状态为失败
+     * @param base
+     * @param status
+     */
   private void propagateStatus(ExecutableFlowBase base, Status status) {
     if (!Status.isStatusFinished(base.getStatus())) {
       logger.info("Setting " + base.getNestedId() + " to " + status);
@@ -570,11 +602,19 @@ public class FlowRunner extends EventHandler implements Runnable {
     }
   }
 
+    /**
+     * 将任务流中的任务(可以是任务流)设置为结束
+     * @param node
+     */
   private void finishExecutableNode(ExecutableNode node) {
     finishedNodes.add(node);
     fireEventListeners(Event.create(this, Type.JOB_FINISHED, node));
   }
 
+    /**
+     * 结束任务流的运行（可以是内嵌的任务流，也可以是最外层的任务流top_level flow）
+     * @param flow
+     */
   private void finalizeFlow(ExecutableFlowBase flow) {
     String id = flow == this.flow ? "" : flow.getNestedId();
 
@@ -583,6 +623,7 @@ public class FlowRunner extends EventHandler implements Runnable {
     boolean succeeded = true;
     Props previousOutput = null;
 
+      /** 遍历判断当前流（可能是最外层，也可能是内嵌的某个任务流）是否是succeeded，并收集结束属性*/
     for (String end : flow.getEndNodes()) {
       ExecutableNode node = flow.getExecutableNode(end);
 
@@ -601,6 +642,7 @@ public class FlowRunner extends EventHandler implements Runnable {
     }
 
     flow.setOutputProps(previousOutput);
+      /** 如果有某个收尾节点失败，并且任务流还在运行中running，kill当前任务流*/
     if (!succeeded && (flow.getStatus() == Status.RUNNING)) {
       flow.setStatus(Status.KILLED);
     }
@@ -627,6 +669,9 @@ public class FlowRunner extends EventHandler implements Runnable {
           + " in " + durationSec + " seconds");
     }
 
+      /**
+       * 如果是最外层任务流，那么结束循环等待
+       */
     // If the finalized flow is actually the top level flow, than we finish
     // the main loop.
     if (flow instanceof ExecutableFlow) {
@@ -726,6 +771,11 @@ public class FlowRunner extends EventHandler implements Runnable {
     return props;
   }
 
+    /**
+     * 运行普通任务
+     * @param node
+     * @throws IOException
+     */
   private void runExecutableNode(ExecutableNode node) throws IOException {
     // Collect output props from the job's dependencies.
     prepareJobProperties(node);
@@ -739,10 +789,11 @@ public class FlowRunner extends EventHandler implements Runnable {
     } catch (RejectedExecutionException e) {
       logger.error(e);
     }
-    ;
   }
 
   /**
+   * 获取下一个即将进行的状态。
+   * 判断当前任务节点是否可以执行（未必最终运行，比如状态为skip、disabled），检查依赖的节点是否都处于那些成功的状态
    * Determines what the state of the next node should be. Returns null if the
    * node should not be run.
    *
@@ -778,7 +829,7 @@ public class FlowRunner extends EventHandler implements Runnable {
     // If it's disabled but ready to run, we want to make sure it continues
     // being disabled.
     if (node.getStatus() == Status.DISABLED
-        || node.getStatus() == Status.SKIPPED) {
+        || node.getStatus() == Status.SKIPPED) {//禁用的任务在运行过程中是以跳过作为完成状态的
       return Status.SKIPPED;
     }
 
@@ -812,6 +863,12 @@ public class FlowRunner extends EventHandler implements Runnable {
     return previousOutput;
   }
 
+    /**
+     * 创建普通任务runner，
+     * 用于普通任务的运行
+     * @param node
+     * @return
+     */
   private JobRunner createJobRunner(ExecutableNode node) {
     // Load job file.
     File path = new File(execDir, node.getJobSource());
@@ -840,6 +897,7 @@ public class FlowRunner extends EventHandler implements Runnable {
   }
 
   /**
+   * 只是用于跟踪正在运行的任务的数量已经执行失败的任务数量
    * Configure Azkaban metrics tracking for a new jobRunner instance
    *
    * @param jobRunner
@@ -1042,6 +1100,11 @@ public class FlowRunner extends EventHandler implements Runnable {
     flowRunnerThread.interrupt();
   }
 
+    /**
+     * 创建jobRunner传入的事件监听器，
+     * 在jobRunner中注册事件（在监听器列表中add）。
+     *
+     */
   private class JobRunnerEventListener implements EventListener {
     public JobRunnerEventListener() {
     }
@@ -1050,9 +1113,9 @@ public class FlowRunner extends EventHandler implements Runnable {
     public synchronized void handleEvent(Event event) {
       JobRunner runner = (JobRunner) event.getRunner();
 
-      if (event.getType() == Type.JOB_STATUS_CHANGED) {
+      if (event.getType() == Type.JOB_STATUS_CHANGED) {//每当任务状态改变，更新整个任务流运行时数据
         updateFlow();
-      } else if (event.getType() == Type.JOB_FINISHED) {
+      } else if (event.getType() == Type.JOB_FINISHED) {//任务结束
         ExecutableNode node = runner.getNode();
         long seconds = (node.getEndTime() - node.getStartTime()) / 1000;
         synchronized (mainSyncObj) {
@@ -1067,9 +1130,11 @@ public class FlowRunner extends EventHandler implements Runnable {
             flowPaused = false;
           }
 
+          /** 双列表数据结构，在备用列表中记录已经完成的任务*/
           finishedNodes.add(node);
           node.getParentFlow().setUpdateTime(System.currentTimeMillis());
           interrupt();
+            /** 在这个任务流的事件列表中（父类）传播事件，触发相应的处理*/
           fireEventListeners(event);
         }
       }

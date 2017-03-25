@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import azkaban.event.EventListener;
+import azkaban.project.ProjectLoader;
 import org.apache.log4j.Appender;
 import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.Layout;
@@ -50,6 +52,15 @@ import azkaban.jobtype.JobTypeManagerException;
 import azkaban.utils.Props;
 import azkaban.utils.StringUtils;
 
+/**
+ * 任务流中普通任务的一次运行。
+ * <br>
+ * note：
+ * <ul>
+ *     <li>这里的日志使用的是所在流的日志，用于记录和跟踪一整套这个流执行过程中的所有输出信息</li>
+ *     <li>每个任务在其内部要使用这个logger时，会加上一个对象锁，内部打印日志的时候不能交叉使用</li>
+ * </ul>
+ */
 public class JobRunner extends EventHandler implements Runnable {
   public static final String AZKABAN_WEBSERVER_URL = "azkaban.webserver.url";
 
@@ -63,6 +74,7 @@ public class JobRunner extends EventHandler implements Runnable {
 
   private Logger logger = null;
   private Layout loggerLayout = DEFAULT_LAYOUT;
+  /** 这里的日志使用的是所在流的日志，用于记录和跟踪一整套这个流执行过程中的所有输出信息*/
   private Logger flowLogger = null;
 
   private Appender jobAppender;
@@ -73,6 +85,7 @@ public class JobRunner extends EventHandler implements Runnable {
   private int executionId = -1;
   private String jobId;
 
+  /** 使用所在流的logger时避免冲突使用的对象锁，注意这里使用的是static，也就是会在所有任务之间使用日志的时候会加上锁*/
   private static final Object logCreatorLock = new Object();
   private Object syncObject = new Object();
 
@@ -81,20 +94,27 @@ public class JobRunner extends EventHandler implements Runnable {
   // Used by the job to watch and block against another flow
   private Integer pipelineLevel = null;
   private FlowWatcher watcher = null;
+    /** 假设所在外层任务流为flowP，那么pipelineJobs是用于阻塞flowP中当前job所在节点所在的路径*/
   private Set<String> pipelineJobs = new HashSet<String>();
 
   private Set<String> proxyUsers = null;
 
+    /** 当前任务日志的大小，默认最大5M，超过将截取5M
+     * @see FlowRunnerManager#FlowRunnerManager
+     * */
   private String jobLogChunkSize;
+    /** 日志备份数量，默认为4*/
   private int jobLogBackupIndex;
 
+    /** 延迟开始时间*/
   private long delayStartMs = 0;
   private boolean killed = false;
+    /** 当前任务对应的阻塞状态，只是用于当前job runner*/
   private BlockingStatus currentBlockStatus = null;
 
   public JobRunner(ExecutableNode node, File workingDir, ExecutorLoader loader,
       JobTypeManager jobtypeManager) {
-    this.props = node.getInputProps();
+    this.props = node.getInputProps();//当前节点的属性是入口属性
     this.node = node;
     this.workingDir = workingDir;
 
@@ -119,6 +139,12 @@ public class JobRunner extends EventHandler implements Runnable {
     return props;
   }
 
+    /**
+     * 形成串行执行的列表。
+     * 这个函数用于获取原本可以并行执行的任务列表。
+     * @param watcher
+     * @param pipelineLevel
+     */
   public void setPipeline(FlowWatcher watcher, int pipelineLevel) {
     this.watcher = watcher;
     this.pipelineLevel = pipelineLevel;
@@ -129,13 +155,16 @@ public class JobRunner extends EventHandler implements Runnable {
       pipelineJobs.add(node.getNestedId());
       ExecutableFlowBase parentFlow = node.getParentFlow();
 
-      if (parentFlow.getEndNodes().contains(node.getId())) {
+      if (parentFlow.getEndNodes().contains(node.getId())) {//是所在内嵌流的尾部节点之一
         if (!parentFlow.getOutNodes().isEmpty()) {
           ExecutableFlowBase grandParentFlow = parentFlow.getParentFlow();
           for (String outNode : parentFlow.getOutNodes()) {
             ExecutableNode nextNode =
                 grandParentFlow.getExecutableNode(outNode);
 
+              /**
+               * 将后续普通节点加入pipelineJobs中，或者后续内嵌任务流的开始节点加入pipelineJobs中
+               */
             // If the next node is a nested flow, then we add the nested
             // starting nodes
             if (nextNode instanceof ExecutableFlowBase) {
@@ -146,7 +175,7 @@ public class JobRunner extends EventHandler implements Runnable {
             }
           }
         }
-      } else {
+      } else {//非内嵌流尾部的节点
         for (String outNode : node.getOutNodes()) {
           ExecutableNode nextNode = parentFlow.getExecutableNode(outNode);
 
@@ -163,6 +192,15 @@ public class JobRunner extends EventHandler implements Runnable {
     }
   }
 
+    /**
+     * 获取所有开始节点。
+     * 对于有任务流的嵌套的情况，将递归进行下去，
+     * 每一次都取当前任务流节点的开始任务，
+     * 如果开始任务是普通任务，直接加入pipelineJobs中；
+     * 如果开始任务是内嵌的任务流，那么递归获取这个任务流的开始任务
+     * @param flow
+     * @param pipelineJobs
+     */
   private void findAllStartingNodes(ExecutableFlowBase flow,
       Set<String> pipelineJobs) {
     for (String startingNode : flow.getStartNodes()) {
@@ -257,7 +295,7 @@ public class JobRunner extends EventHandler implements Runnable {
   /**
    * Used to handle non-ready and special status's (i.e. KILLED). Returns true
    * if they handled anything.
-   *
+   * 处理任务不需要运行的情况--更正：处理当轮到这个任务实际运行的时候，下一个状态不是READY的情况
    * @return
    */
   private boolean handleNonReadyStatus() {
@@ -267,7 +305,7 @@ public class JobRunner extends EventHandler implements Runnable {
 
     if (Status.isStatusFinished(nodeStatus)) {
       quickFinish = true;
-    } else if (nodeStatus == Status.DISABLED) {
+    } else if (nodeStatus == Status.DISABLED) {//禁用
       changeStatus(Status.SKIPPED, time);
       quickFinish = true;
     } else if (this.isKilled()) {
@@ -288,6 +326,7 @@ public class JobRunner extends EventHandler implements Runnable {
 
   /**
    * If pipelining is set, will block on another flow's jobs.
+   * return true if something went wrong
    */
   private boolean blockOnPipeLine() {
     if (this.isKilled()) {
@@ -311,6 +350,9 @@ public class JobRunner extends EventHandler implements Runnable {
         logger.info("Pipeline job " + this.jobId + " waiting on " + blockedList
             + " in execution " + watcher.getExecId());
 
+          /** 遍历阻塞状态列表，一个一个调用阻塞状态的等待执行成功方法，
+           * 不会浪费很多时间，总的等待时间差不多是这些阻塞状态里面状态变为完成所用时间的最大值
+           * */
         for (BlockingStatus bStatus : blockingStatus) {
           logger.info("Waiting on pipelined job " + bStatus.getJobId());
           currentBlockStatus = bStatus;
@@ -329,6 +371,10 @@ public class JobRunner extends EventHandler implements Runnable {
     return false;
   }
 
+    /**
+     * return true if something went wrong
+     * @return
+     */
   private boolean delayExecution() {
     if (this.isKilled()) {
       return true;
@@ -412,7 +458,7 @@ public class JobRunner extends EventHandler implements Runnable {
         "JobRunner-" + this.jobId + "-" + executionId);
 
     // If the job is cancelled, disabled, killed. No log is created in this case
-    if (handleNonReadyStatus()) {
+    if (handleNonReadyStatus()) {//处理任务不需要运行的情况，如：任务取消
       return;
     }
 
@@ -431,6 +477,7 @@ public class JobRunner extends EventHandler implements Runnable {
     if (!errorFound && !isKilled()) {
       fireEvent(Event.create(this, Type.JOB_STARTED, null, false));
       try {
+          /** 上传可执行普通任务，默认实现是在数据库表execution_jobs中记录一条信息，*/
         loader.uploadExecutableNode(node, props);
       } catch (ExecutorManagerException e1) {
         logger.error("Error writing initial node properties");
@@ -624,6 +671,12 @@ public class JobRunner extends EventHandler implements Runnable {
     fireEvent(event, true);
   }
 
+    /**
+     * 用于调用{@link EventHandler#fireEventListeners}，让它遍历所有监听器队列，
+     * 调用所有监听器的{@link EventListener#handleEvent(Event)},从而达到让感兴趣的监听器处理当前事件
+     * @param event
+     * @param updateTime
+     */
   private void fireEvent(Event event, boolean updateTime) {
     if (updateTime) {
       node.setUpdateTime(System.currentTimeMillis());

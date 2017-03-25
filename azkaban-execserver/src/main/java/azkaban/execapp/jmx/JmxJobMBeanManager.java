@@ -16,7 +16,11 @@ import azkaban.utils.Props;
 /**
  * Responsible keeping track of job related MBean attributes through listening
  * to job related events.
- * 
+ * <pre>
+ *     用于监听任务的状态变化，只是统计正在运行的任务数量、已经执行的任务总量、
+ *     已经失败的任务总量、已经执行成功的他任务总量、
+ *     各个任务类型执行失败的任务总量、各个类型执行成功的任务总量
+ * </pre>
  * @author hluu
  *
  */
@@ -93,6 +97,13 @@ public class JmxJobMBeanManager implements JmxJobMXBean, EventListener {
     return result;
   }
 
+    /**
+     * 只处理监听事件中的那些和任务状态变化相关的
+     * （这点可以从{@link Event#getRunner}获取是任务还是任务流Runner），
+     * 用于上面的几个统计数据
+     * （runningJobCount、totalExecutedJobCount、totalFailedJobCount、totalSucceededJobCount）
+     * @param event
+     */
   @Override
   public void handleEvent(Event event) {
     if (!initialized) {

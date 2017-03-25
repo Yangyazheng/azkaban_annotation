@@ -29,7 +29,7 @@ import azkaban.utils.Props;
 import azkaban.utils.Triple;
 
 /**
- * project加载器接口
+ * project加载器接口,对project进行管理，包括project版本、清除旧版本、设置属性，增删改查project、上传project文件等
  */
 public interface ProjectLoader {
 

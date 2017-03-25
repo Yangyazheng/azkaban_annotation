@@ -41,6 +41,9 @@ import azkaban.executor.ExecutableNode;
 import azkaban.jobcallback.JobCallbackStatusEnum;
 import azkaban.utils.Props;
 
+/**
+ * 任务回调工具，主要用于根据{@link Props}生成对应的一系列{@link HttpRequestBase},用于任务的状态请求回调
+ */
 public class JobCallbackUtil {
   private static final Logger logger = Logger.getLogger(JobCallbackUtil.class);
 
@@ -58,6 +61,7 @@ public class JobCallbackUtil {
   /**
    * Use to quickly determine if there is a job callback related property in the
    * Props.
+   * <pre>快速判断{@link Props}中是否包含合法的{@link JobCallbackStatusEnum}中的一个enum</pre>
    * 
    * @param props
    * @param status
@@ -74,6 +78,12 @@ public class JobCallbackUtil {
     return props.containsKey(jobCallBackUrl);
   }
 
+    /**
+     * <pre>快速判断{@link Props}中是否包含合法的{@link JobCallbackStatusEnum}的数组中的任意一个</pre>
+     * @param props
+     * @param jobStatuses
+     * @return
+     */
   public static boolean isThereJobCallbackProperty(Props props,
       JobCallbackStatusEnum... jobStatuses) {
 
@@ -102,6 +112,7 @@ public class JobCallbackUtil {
    * them into a list of HttpRequestBase, which callers can use to execute.
    * 
    * In addition to parsing, it will also replace the tokens with actual values.
+   * <pre>将任务调用的一些属性数据转为一系列Http调用，用于任务回调中的http请求的生成</pre>
    * 
    * @param props
    * @param status

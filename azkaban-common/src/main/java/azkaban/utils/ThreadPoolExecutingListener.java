@@ -18,7 +18,10 @@ package azkaban.utils;
 /**
  * Interface for listener to get notified before and after a task has been
  * executed.
- * 
+ * <pre>
+ * 用于在线程池中，开始执行和结束执行的时候do something。
+ * Azkaban默认实现：FlowRunnerManager和NoOpThreadPoolExecutingListener
+ * </pre>
  * @author hluu
  * 
  */

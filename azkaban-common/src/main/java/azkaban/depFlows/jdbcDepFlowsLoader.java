@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by 邓志龙 on 2016/10/19.
+ * Created by yyz on 2016/10/19.
  */
 public class jdbcDepFlowsLoader extends AbstractJdbcLoader implements DepFlowsLoader {
     private static Logger logger = Logger.getLogger(jdbcDepFlowsLoader.class);
