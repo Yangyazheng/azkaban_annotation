@@ -61,7 +61,7 @@ public class JdbcExecutorLoader extends AbstractJdbcLoader implements
   private static final Logger logger = Logger
       .getLogger(JdbcExecutorLoader.class);
     //modified start----------------
-    //modified by yazheng.yang@hand-china.com
+    //modified by young.yang@hand-china.com
     //将数据库中json存储形式改为直接文本存储
 //  private EncodingType defaultEncodingType = EncodingType.GZIP;
     private EncodingType defaultEncodingType = EncodingType.PLAIN;

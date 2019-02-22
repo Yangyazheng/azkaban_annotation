@@ -125,7 +125,7 @@ public class DataSourceUtils {
    * Hidden datasource
    */
     //modified start----------------
-    //modified by yazheng.yang@hand-china.com
+    //modified by young.yang@hand-china.com
     //private DataSourceUtils() {
     //可以访问到和使用到数据源
   protected DataSourceUtils() {
@@ -179,7 +179,7 @@ public class DataSourceUtils {
     }
 
       //add start-----------------------------
-      //add by yazheng.yang@hand-china.com
+      //add by young.yang@hand-china.com
       @Override
       public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
           return null;
@@ -260,7 +260,7 @@ public class DataSourceUtils {
     }
 
       //add start-----------------------------
-      //add by yazheng.yang@hand-china.com
+      //add by young.yang@hand-china.com
       @Override
       public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
           return null;
